@@ -1,0 +1,59 @@
+.container-fluid {
+    padding: 0 7% 0 7%;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    padding: 0 15%;
+}
+
+.logo {
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.card-img-top {
+    padding: 8%;
+}
+
+.card-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #00275a;
+    text-decoration: none;
+}
+
+.card-title:hover {
+    text-decoration: underline;
+    color: #00275a;
+}
+
+.card-text{
+    margin-bottom: 50px;
+}
+
+.price{
+    color: #e9242e;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.buy-btn {
+    float: right;
+}
+
+p {
+    color: #4a5a64;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 20em;
+}
+

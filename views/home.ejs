@@ -1,0 +1,28 @@
+<%- include('partials/header'); %>
+
+    <div class="products">
+        <% for(let index = 0; index < products.length; index++){ %>
+            <div class="card ">
+                <img src="<%=products[index].img%>" class="card-img-top" alt="cpucko">
+                <div class="card-body">
+                    <a href="#" class="card-title"><%=products[index].name%></a>
+                    <p class="card-text"><%=products[index].desc%></p>
+                    <span class="price"><%=products[index].price%> €</span>
+                    <a href="#" class="btn btn-primary buy-btn"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</a>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+
+<%- include('partials/footer'); %>
+
+
+
+
+<!-- <%=products[0].name%>
+    <%=products[0].desc%>
+    <%=products[0].stock%>
+    <%=products[0].rating%>
+    <%=products[0].price%>
+    <%=products[0].img%> -->
