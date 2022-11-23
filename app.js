@@ -9,7 +9,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost:27017/eshopDB");
+mongoose.connect("mongodb+srv://admin-yanshiro:CreatureoftheDatabase23@cluster0.bwelaio.mongodb.net/eshopDB");
 
 const productSchema = new mongoose.Schema({
     name: String,
@@ -35,7 +35,7 @@ const gpu = new Product({
     img: "/images/MSI GeForce RTX 3080 VENTUS 3X PLUS 10G OC LHR.jfif"
 });
 
-//gpu.save();
+gpu.save();
 
 
 
