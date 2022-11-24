@@ -41,6 +41,10 @@ const newProd = new Product({
 
 
 
+
+
+// ROUTES
+
 app.get("/", (req, res) => {
     products = [];
     Product.find({}, (err, foundProducts) => {
@@ -52,6 +56,18 @@ app.get("/", (req, res) => {
         }
     })
 })
+
+app.get("/categories/:category", (req, res) => {
+    let category = req.params.category;
+    Product.find({category: category}, (err, foundProducts) => {
+        if(err){
+            console.log(err);
+        } else {
+            res.render("home", {products: foundProducts});
+        }
+    })
+})
+
 
 
 
