@@ -1,23 +1,20 @@
 <%- include('partials/header'); %>
-    <div class="sidenav">
-        <ul>
-            <li><a href="#">CPU</a></li>
-            <li><a href="#">CPU</a></li>
-            <li><a href="#">CPU</a></li>
-            <li><a href="#">CPU</a></li>
-            <li><a href="#">CPU</a></li>
-            <li><a href="#">CPU</a></li>
-            <li><a href="#">CPU</a></li>
-        </ul>
+    <div class="content row">
 
-    </div>
-    <div class="products">
+    
+    <%- include('partials/sidenav'); %>
+
+    <div class="products col-10">
         <% for(let index = 0; index < products.length; index++){ %>
             <div class="card ">
                 <img src="<%=products[index].img%>" class="card-img-top" alt="cpucko">
                 <div class="card-body">
                     <a href="#" class="card-title"><%=products[index].name%></a>
                     <p class="card-text"><%=products[index].desc%></p>
+                    
+                    
+                </div>
+                <div class="my-card-footer">
                     <span class="price"><%=products[index].price%> €</span>
                     <a href="#" class="btn btn-primary buy-btn"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</a>
                 </div>
@@ -25,7 +22,7 @@
         <% } %>
     </div>
 
-
+</div>
 <%- include('partials/footer'); %>
 
 
