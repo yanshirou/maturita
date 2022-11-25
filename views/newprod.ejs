@@ -1,0 +1,46 @@
+<%- include('partials/header'); %>
+    <div class="content row">
+
+    
+    <%- include('partials/sidenav'); %>
+
+    <div class="new-prod-form col-10">
+        <form action="/newprod" method="POST">
+            <div class="form-group">
+                <label for="newProdName">Nazov</label>
+                    <input type="text" class="form-control" id="newProdName" placeholder="napr. AMD Ryzen 7 5800X">
+            </div>
+
+            <div class="form-group">
+                <label for="newProdCategory">Kategoria</label>
+                <select class="form-control" id="newProdCategory">
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="newProdDescription">Nazov</label>
+                    <input type="text" class="form-control" id="newProdDescription" placeholder="napr. Procesor 8-jadrový, 16 vláken, ...">
+            </div>
+
+            <div class="form-group">
+                <label for="newProdStock">Na Sklade</label>
+                    <input type="number" class="form-control" id="newProdStock">
+            </div>
+
+            <div class="form-group">
+                <label for="newProdRating">Hodnotenie</label>
+                    <input type="number" class="form-control" id="newProdRating">
+            </div>
+        </form>
+    </div>
+
+    </div>
+<%- include('partials/footer'); %>
