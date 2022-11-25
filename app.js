@@ -1,4 +1,4 @@
-//require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
@@ -9,7 +9,8 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://admin-yanshiro:CreatureoftheDatabase23@cluster0.bwelaio.mongodb.net/eshopDB");
+const uri = "mongodb+srv://admin-yanshiro:" + process.env.database_password + "@cluster0.bwelaio.mongodb.net/eshopDB"
+mongoose.connect(uri);
 
 const productSchema = new mongoose.Schema({
     name: String,
