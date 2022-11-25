@@ -90,8 +90,12 @@ ul {
 
 
 
-
+/* NOVY PRODUKT */
 .new-prod-form {
     background-color: ghostwhite;
     padding: 1rem;
+}
+
+.form-group {
+    padding: 10px 0;
 }

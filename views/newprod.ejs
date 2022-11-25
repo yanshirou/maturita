@@ -5,15 +5,15 @@
     <%- include('partials/sidenav'); %>
 
     <div class="new-prod-form col-10">
-        <form action="/newprod" method="POST">
+        <form action="/newprod" method="post">
             <div class="form-group">
-                <label for="newProdName">Nazov</label>
-                    <input type="text" class="form-control" id="newProdName" placeholder="napr. AMD Ryzen 7 5800X">
+                <label for="newProdName">Názov</label>
+                    <input type="text" class="form-control" name="newProdName" placeholder="napr. AMD Ryzen 7 5800X">
             </div>
 
             <div class="form-group">
-                <label for="newProdCategory">Kategoria</label>
-                <select class="form-control" id="newProdCategory">
+                <label for="newProdCategory">Kategória</label>
+                <select class="form-control" name="newProdCategory">
                   <option>1</option>
                   <option>2</option>
                   <option>3</option>
@@ -22,23 +22,34 @@
                   <option>6</option>
                   <option>7</option>
                   <option>8</option>
+                  <option>9</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="newProdDescription">Nazov</label>
-                    <input type="text" class="form-control" id="newProdDescription" placeholder="napr. Procesor 8-jadrový, 16 vláken, ...">
+                <label for="newProdDescription">Popis</label>
+                    <input type="text" class="form-control" name="newProdDescription" placeholder="napr. 'Procesor 8-jadrový, 16 vláken, ...'">
             </div>
 
             <div class="form-group">
-                <label for="newProdStock">Na Sklade</label>
-                    <input type="number" class="form-control" id="newProdStock">
+                <label for="newProdStock">Kusov na sklade</label>
+                    <input type="number" class="form-control" name="newProdStock">
             </div>
 
             <div class="form-group">
                 <label for="newProdRating">Hodnotenie</label>
-                    <input type="number" class="form-control" id="newProdRating">
+                    <input type="number" class="form-control" name="newProdRating" min="0" max="5">
             </div>
+            <div class="form-group">
+                <label for="newProdPrice">Cena</label>
+                    <input type="number" class="form-control" name="newProdPrice" step="any" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="newProdImg">URL na obrázok</label>
+                    <input type="text" class="form-control" name="newProdImg" placeholder="napr. 'https://cdn.alza.sk/ia45g5r4sd3b'">
+            </div>
+            <button type="submit" class="btn btn-primary">Pridať</button>
         </form>
     </div>
 

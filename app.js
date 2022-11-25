@@ -40,14 +40,11 @@ const newProd = new Product({
 //newProd.save();
 
 
-
-
-
 // ROUTES
 
 app.get("/", (req, res) => {
     products = [];
-    Product.find({}, (err, foundProducts) => {
+    Product.find({category: { $lt: 9 }}, (err, foundProducts) => {
         if(!err){
             foundProducts.forEach(foundProduct => products.push(foundProduct))
             res.render("home", {products: products})
@@ -69,10 +66,30 @@ app.get("/categories/:category", (req, res) => {
 })
 
 
+    // ADDING A NEW PRODUCT
 app.get("/newprod", (req, res) => {
     res.render("newprod");
 })
 
+app.post("/newprod", (req, res) => {
+    const newProd = new Product({
+        name: req.body.newProdName,
+        category: req.body.newProdCategory,
+        desc: req.body.newProdDescription,
+        stock: req.body.newProdStock,
+        rating: req.body.newProdRating,
+        price: req.body.newProdPrice,
+        img: req.body.newProdImg
+    });
+    newProd.save((err) => {
+        if(!err){
+            res.redirect("/");
+            console.log("Added a new product");
+        } else {
+            console.log(err);
+        }
+    });
+})
 
 
 app.listen(3000, () => {
