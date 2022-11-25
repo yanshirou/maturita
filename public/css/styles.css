@@ -3,12 +3,12 @@
 }
 
 .content{
-    padding: 0 15% 0;
+    padding: 10px 15% 0;
 }
 
 body {
     font-family: 'Montserrat', sans-serif;
-    background-color: azure;
+    background-color: rgb(189, 210, 255);
 }
 
 .logo {
@@ -59,8 +59,9 @@ p {
 .sidenav {
     background-color: white;
     padding:0;
-    border: 1px solid
-  }
+    border: 1px solid;
+    border-radius: 0.375rem;
+}
 
 .nav-link {
     text-align: center;
@@ -85,4 +86,12 @@ ul {
     list-style-type: none;
     padding: 0;
     margin: 12px 0 0 0;
+}
+
+
+
+
+.new-prod-form {
+    background-color: ghostwhite;
+    padding: 1rem;
 }

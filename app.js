@@ -69,6 +69,10 @@ app.get("/categories/:category", (req, res) => {
 })
 
 
+app.get("/newprod", (req, res) => {
+    res.render("newprod");
+})
+
 
 
 app.listen(3000, () => {
