@@ -9,7 +9,8 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-const uri = "mongodb+srv://admin-yanshiro:" + process.env.database_password + "@cluster0.bwelaio.mongodb.net/eshopDB"
+
+const uri = "mongodb+srv://admin-yanshiro:" + process.env.DATABASE_PASSWORD + "@cluster0.bwelaio.mongodb.net/eshopDB"
 mongoose.connect(uri);
 
 const productSchema = new mongoose.Schema({

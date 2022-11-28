@@ -9,11 +9,19 @@
             <div class="card ">
                 <img src="<%=products[index].img%>" class="card-img-top" alt="obrazok">
                 <div class="card-body">
+                    <span class="card-rating">
+                        <% for(let i = 0; i < products[index].rating; i++){ %>
+                            <i class="fa-solid fa-star"></i>
+                        <% } %>
+                        <% for(let i = 0; i < 5 - products[index].rating; i++){ %>
+                            <i class="fa-regular fa-star"></i>
+                        <% } %>
+                    </span>
                     <a href="#" class="card-title"><%=products[index].name%></a>
                     <p class="card-text"><%=products[index].desc%></p>
                 </div>
                 <div class="my-card-footer">
-                    <span class="price"><%=products[index].price%> €</span>
+                    <span class="price"><%=products[index].price.toFixed(2)%> €</span>
                     <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</a>
                 </div>
             </div>

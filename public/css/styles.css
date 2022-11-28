@@ -26,6 +26,7 @@ body {
     font-size: 13px;
     color: #00275a;
     text-decoration: none;
+    margin-bottom: 0;
 }
 
 .card-title:hover {
@@ -33,6 +34,9 @@ body {
     color: #00275a;
 }
 
+.card-title {
+    display: block;
+}
 
 .price{
     color: #e9242e;
@@ -99,3 +103,8 @@ ul {
 .form-group {
     padding: 10px 0;
 }
+
+.fa-star {
+    color: gold;
+}
+
