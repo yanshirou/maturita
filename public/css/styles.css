@@ -8,7 +8,9 @@
 
 body {
     font-family: 'Montserrat', sans-serif;
-    background-color: rgb(189, 210, 255);
+    background: linear-gradient(180deg, rgba(248,249,250,1) 100px, rgba(255,136,136,1) 300px);
+
+    overflow-x: hidden;
 }
 
 .logo {
@@ -38,12 +40,15 @@ body {
     display: block;
 }
 
+.nav-link {
+    text-align: center;
+}
+
 .price{
     color: #e9242e;
     font-weight: bold;
     font-size: 20px;
 }
-
 
 p {
     color: #4a5a64;
@@ -60,16 +65,7 @@ p {
     width: 33.3333%;
 }
 
-.sidenav {
-    background-color: white;
-    padding:0;
-    border: 1px solid;
-    border-radius: 0.375rem;
-}
 
-.nav-link {
-    text-align: center;
-}
 
 
 .my-card-footer {
@@ -79,18 +75,7 @@ p {
     padding: 0 15px 13px;
 }
 
-li {
-    border-top: 2px solid #00275a;
-    background-color: ghostwhite;
-    padding: 4px 10px;
-}
 
-
-ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 12px 0 0 0;
-}
 
 
 
@@ -106,5 +91,38 @@ ul {
 
 .fa-star {
     color: gold;
+}
+
+.card-rating {
+    font-size: 0.8rem;
+}
+
+.sidenav {
+    padding: 0;
+}
+
+.sidenav > div {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding:0;
+    border: 1px solid;
+    border-radius: 0.375rem;
+}
+
+
+
+.sidenav a{
+    text-decoration: none;
+    color: #00275a;
+    padding: 10px;
+    border-radius: 0.375rem;
+}
+
+.sidenav a:hover{
+    text-decoration: none;
+    color: #00275a;
+    padding: 10px;
+    background-color: rgba(85, 85, 85, 0.1);
 }
 
