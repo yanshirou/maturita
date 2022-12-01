@@ -6,6 +6,10 @@
     padding: 10px 15% 0;
 }
 
+
+html {
+    min-height: 100%;
+}
 body {
     font-family: 'Montserrat', sans-serif;
     background: linear-gradient(180deg, rgba(248,249,250,1) 100px, rgba(255,136,136,1) 300px);
