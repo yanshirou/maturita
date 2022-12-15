@@ -6,6 +6,10 @@
     padding: 10px 15% 0;
 }
 
+.new-prod-form {
+    border: 1px solid;
+    border-radius: 0.375rem;
+}
 
 html {
     min-height: 100%;
@@ -129,4 +133,5 @@ p {
     padding: 10px;
     background-color: rgba(85, 85, 85, 0.1);
 }
+
 

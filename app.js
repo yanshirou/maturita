@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const e = require("express");
 
 const app = express();
 
@@ -62,10 +63,11 @@ passport.deserializeUser(User.deserializeUser());
 
 app.get("/", (req, res) => {
     products = [];
+    console.log(req.user);
     Product.find({category: { $lt: 9 }}, (err, foundProducts) => {
         if(!err){
             foundProducts.forEach(foundProduct => products.push(foundProduct))
-            res.render("home", {products: products})
+            res.render("home", {products: products, user: req.user})
         } else {
             console.log(err);
         }
@@ -78,7 +80,7 @@ app.get("/categories/:category", (req, res) => {
         if(err){
             console.log(err);
         } else {
-            res.render("home", {products: foundProducts});
+            res.render("home", {products: foundProducts, user: req.user});
         }
     })
 })
@@ -86,7 +88,7 @@ app.get("/categories/:category", (req, res) => {
 
     // ADDING A NEW PRODUCT
 app.get("/newprod", (req, res) => {
-    res.render("newprod");
+    res.render("newprod", {user: req.user});
 })
 
     // LOGIN AND REGISTER PAGE
@@ -100,7 +102,7 @@ app.get("/register", (req, res) => {
 
 app.get("/profile", (req, res) => {
     if (req.isAuthenticated()){
-        res.render("profile", {acc: req.user.username})
+        res.render("profile", {user: req.user})
     } else {
         res.redirect("/login");
     }
@@ -135,6 +137,17 @@ app.post("/login", (req, res) => {
         }
     })
 })
+
+app.post('/logout', function(req, res){
+    req.logout(function(err) {
+        if(!err){
+            res.redirect('/');
+        } else {
+            console.log(err);
+        }
+        
+    });
+  });
 
 
 app.post("/newprod", (req, res) => {

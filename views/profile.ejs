@@ -1,1 +1,15 @@
-Logged in as <%= acc %>
+
+<%- include('partials/header', {user: user}); %>
+    <div class="content">
+        <h1>Logged in as: <%= user.username %></h1>
+
+        <form action="/" method="GET">  
+            <button class="btn btn-primary" type="submit">Domov</button>
+        </form>
+        <form action="/logout" method="POST">
+            <button class="btn btn-danger">Logout</button>
+        </form>
+
+        
+    </div>
+<%- include('partials/footer'); %>
