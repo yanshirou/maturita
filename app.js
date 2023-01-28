@@ -42,7 +42,8 @@ const productSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
     username: String,
     email: String,
-    password: String
+    password: String,
+    isAdmin: { type: Boolean, default: false }
 })
 
 userSchema.plugin(passportLocalMongoose);
@@ -63,8 +64,8 @@ passport.deserializeUser(User.deserializeUser());
 
 app.get("/", (req, res) => {
     products = [];
-    console.log(req.user);
     Product.find({category: { $lt: 9 }}, (err, foundProducts) => {
+    //Product.find({_id: "637eaca243130301784871b9"}, (err, foundProducts) => {
         if(!err){
             foundProducts.forEach(foundProduct => products.push(foundProduct))
             res.render("home", {products: products, user: req.user})
@@ -88,7 +89,17 @@ app.get("/categories/:category", (req, res) => {
 
     // ADDING A NEW PRODUCT
 app.get("/newprod", (req, res) => {
-    res.render("newprod", {user: req.user});
+    if (req.isAuthenticated()){
+        if (req.user.isAdmin) {
+            res.render("newprod", {user: req.user});
+        } else {
+            res.redirect("/");
+            console.log("FORBIDDEN: NOT AN ADMIN");
+        }
+    } else {
+        res.redirect("/login");
+        console.log("FORBIDDEN: NOT LOGGED IN");
+    }
 })
 
     // LOGIN AND REGISTER PAGE
