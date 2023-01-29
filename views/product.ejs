@@ -9,7 +9,11 @@
             <h1><%=product.name%></h1>
             <p><%=product.desc%></p>
             <span class="price"><%=product.price.toFixed(2)%> €</span>
-            <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</a>
+
+            <form action="/buyproduct/<%=product._id%>" method="post">
+               <button type="submit" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</button>
+            </form>
+            <!-- <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</a> -->
             
             <% if(typeof user !== 'undefined') { %>
                <% if(user.isAdmin) { %>

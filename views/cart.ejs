@@ -1,0 +1,22 @@
+<%- include('partials/header', {user: user}); %>
+    <div class="content row">
+
+       <div class="tab row">
+        <% for(let index = 0; index < products.length; index++){ %>
+            <div class="item row">
+                <div class="col-2">
+                    <img class="product-image" src="<%=products[index].img%>" alt="product-image">
+                </div>
+                <div class="col-10">
+                    <h1><%=products[index].name%></h1>
+                </div>
+            </div>
+        <% } %> 
+       </div>
+
+    </div>
+        
+
+    
+
+<%- include('partials/footer'); %>

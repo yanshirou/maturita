@@ -43,7 +43,8 @@ const userSchema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
-    isAdmin: { type: Boolean, default: false }
+    isAdmin: { type: Boolean, default: false },
+    cart: [String]
 })
 
 userSchema.plugin(passportLocalMongoose);
@@ -132,6 +133,30 @@ app.get("/product/:id", (req, res) => {
     
 })
 
+app.get("/cart", (req, res) => {
+    
+    User.findById(req.user._id, (err, foundUser) => {
+        if(!err) {
+            let itemIDs = foundUser.cart;
+
+
+            Product.find().where('_id').in(itemIDs).exec((err,foundItems) => {
+                if(!err) {
+                    res.render("cart", {user: req.user, products: foundItems});
+                } else {
+                    console.log(err);
+                }
+                
+            });
+        
+            
+        } else {
+            console.log(err);
+        }
+    })
+
+})
+
 
 app.post("/register", (req, res) => {
     User.register({username: req.body.username, email: req.body.email}, req.body.password, (err, newUser) => {
@@ -218,6 +243,30 @@ app.post("/deleteproduct/:id", (req, res) => {
         console.log("FORBIDDEN: NOT LOGGED IN");
     }
 });
+
+app.post("/buyproduct/:id", (req, res) => {
+    let id = req.params.id;
+    userId = req.user._id;
+    
+    User.findByIdAndUpdate(userId, {$push: { cart: id }}, (err, foundUser) => {
+        if(!err) {
+            console.log("Added item to cart");
+            res.redirect("/product/" + id);
+        } else {
+            console.log(err);
+        }
+    })
+    // User.findById(userId, (err, foundUser) => {
+    //     if(!err) {
+    //         console.log(foundUser);
+    //     } else {
+    //         console.log(err);
+    //     }
+    // })
+    
+
+    
+})
 
 app.listen(3000, () => {
     console.log("Server running at port 3000");
