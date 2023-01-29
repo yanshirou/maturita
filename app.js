@@ -119,6 +119,20 @@ app.get("/profile", (req, res) => {
     }
 })
 
+
+app.get("/product/:id", (req, res) => {
+    let id = req.params.id;
+    Product.findById(id, (err, foundProduct) => {
+        if(!err){
+            res.render("product", {user: req.user, product: foundProduct});
+        } else {
+            console.log(err);
+        }
+    })
+    
+})
+
+
 app.post("/register", (req, res) => {
     User.register({username: req.body.username, email: req.body.email}, req.body.password, (err, newUser) => {
         if(!err){
