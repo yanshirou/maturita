@@ -193,9 +193,31 @@ app.post("/newprod", (req, res) => {
             console.log(err);
         }
     });
-})
+});
 
-
+app.post("/deleteproduct/:id", (req, res) => {
+    //console.log(req.params.findById);
+    let id = req.params.id;
+    
+    if (req.isAuthenticated()) {
+        if (req.user.isAdmin) {
+            Product.findByIdAndDelete(id, (err, deletedItem) => {
+                if(!err) {
+                    console.log("Deleted product: " + id);
+                    res.redirect("/")
+                } else {
+                    console.log(err);
+                }
+            });
+        } else {
+            res.redirect("/");
+            console.log("FORBIDDEN: NOT AN ADMIN");
+        }
+    } else {
+        res.redirect("/login");
+        console.log("FORBIDDEN: NOT LOGGED IN");
+    }
+});
 
 app.listen(3000, () => {
     console.log("Server running at port 3000");

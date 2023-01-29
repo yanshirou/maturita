@@ -10,6 +10,15 @@
             <p><%=product.desc%></p>
             <span class="price"><%=product.price.toFixed(2)%> €</span>
             <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</a>
+            
+            <% if(typeof user !== 'undefined') { %>
+               <% if(user.isAdmin) { %>
+                  <form action="/deleteproduct/<%=product._id%>" method="post">
+                     <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Vymazať</button>
+                     <!-- <a href="#" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Vymazať</a> -->
+                  </form>  
+               <% } %> 
+           <% } %>
          </div>
        </div>
 
