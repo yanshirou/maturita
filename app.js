@@ -28,11 +28,11 @@ const transporter = nodemailer.createTransport({
     port: 587,
     auth: {
         user: 'postavpc@zoznam.sk',
-        pass: 'HesloHesiel123',
+        pass: process.env.SMTP_PASS,
     },
 });
 transporter.verify((err, success) => {
-    if (err) {
+    if(err) {
         console.log(err);
     } else {
         console.log('Transporter verified');
@@ -89,7 +89,7 @@ passport.deserializeUser(User.deserializeUser());
 //temp
 app.get("/cookies", (req, res) => {
     res.send(req.cookies);
-
+        
 })
 //temp
 app.get("/clearcookies", (req, res) => {
@@ -230,8 +230,8 @@ app.get("/cart", (req, res) => {
 app.get("/search", (req, res) => {
     let query = req.query.q;
 
-    Product.find({ $or: [{ name: { $regex: query } }, { desc: { $regex: query } }] }, (err, foundProducts) => {
-        if (!err) {
+    Product.find({$or: [{name: {$regex: query}}, {desc: {$regex: query}}]}, (err, foundProducts) => {
+        if(!err) {
             console.log(foundProducts);
             res.render("home", { products: foundProducts, user: req.user, cookiePopup: req.cookies.cookiePreference })
         } else {
@@ -349,7 +349,7 @@ app.post("/deleteproduct/:id", (req, res) => {
 });
 
 app.post("/buyproduct/:id", (req, res) => {
-
+    
 
     if (!req.user) {
 
