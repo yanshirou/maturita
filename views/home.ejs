@@ -22,7 +22,9 @@
                 </div>
                 <div class="my-card-footer">
                     <span class="price"><%=products[index].price.toFixed(2)%> €</span>
-                    <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</a>
+                    <form action="/buyproduct/<%=products[index]._id%>" method="post">
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</button>
+                     </form>
                 </div>
             </div>
         <% } %>

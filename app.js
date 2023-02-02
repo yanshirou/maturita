@@ -7,11 +7,13 @@ const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const e = require("express");
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true}));
+app.use(cookieParser());
 app.use(express.static("public"));
 app.use(session({
     secret: "Toto potom treba dat do .env",
@@ -63,7 +65,18 @@ passport.deserializeUser(User.deserializeUser());
 
 // ROUTES
 
+
+//temp
+app.get("/cookies", (req, res) => {
+    res.send(req.cookies);
+})
+
+
 app.get("/", (req, res) => {
+    if(req.cookies.cart === undefined) {
+        res.cookie('cart', []);
+    }
+
     products = [];
     Product.find({category: { $lt: 9 }}, (err, foundProducts) => {
     //Product.find({_id: "637eaca243130301784871b9"}, (err, foundProducts) => {
@@ -134,26 +147,38 @@ app.get("/product/:id", (req, res) => {
 })
 
 app.get("/cart", (req, res) => {
+    if(req.user) {
+        User.findById(req.user._id, (err, foundUser) => {
+            if(!err) {
+                let itemIDs = foundUser.cart;
     
-    User.findById(req.user._id, (err, foundUser) => {
-        if(!err) {
-            let itemIDs = foundUser.cart;
-
-
-            Product.find().where('_id').in(itemIDs).exec((err,foundItems) => {
-                if(!err) {
-                    res.render("cart", {user: req.user, products: foundItems});
-                } else {
-                    console.log(err);
-                }
-                
-            });
-        
+    
+                Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
+                    if(!err) {
+                        res.render("cart", {user: req.user, products: foundItems});
+                    } else {
+                        console.log(err);
+                    }
+                    
+                });
             
-        } else {
-            console.log(err);
-        }
-    })
+                
+            } else {
+                console.log(err);
+            }
+        })
+    }
+    
+    if(!req.user) {
+        let itemIDs = req.cookies.cart
+        Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
+            if(!err) {
+                res.render("cart", {user: req.user, products: foundItems});
+            } else {
+                console.log(err);
+            }
+        })
+    }
 
 })
 
@@ -245,26 +270,32 @@ app.post("/deleteproduct/:id", (req, res) => {
 });
 
 app.post("/buyproduct/:id", (req, res) => {
-    let id = req.params.id;
-    userId = req.user._id;
-    
-    User.findByIdAndUpdate(userId, {$push: { cart: id }}, (err, foundUser) => {
-        if(!err) {
-            console.log("Added item to cart");
-            res.redirect("/product/" + id);
-        } else {
-            console.log(err);
-        }
-    })
-    // User.findById(userId, (err, foundUser) => {
-    //     if(!err) {
-    //         console.log(foundUser);
-    //     } else {
-    //         console.log(err);
-    //     }
-    // })
-    
 
+
+    if(!req.user) {
+
+        let id = req.params.id;
+        let cart = req.cookies.cart;
+        //console.log(cart);
+        
+        cart.push(id);
+        res.cookie('cart', cart)
+        res.redirect('/cart');
+    }
+
+    if(req.user) {
+        let id = req.params.id;
+        userId = req.user._id;
+    
+        User.findByIdAndUpdate(userId, {$push: { cart: id }}, (err, foundUser) => {
+            if(!err) {
+                console.log("Added item to cart");
+                res.redirect("/cart");
+            } else {
+                console.log(err);
+            }
+        })
+    }
     
 })
 
