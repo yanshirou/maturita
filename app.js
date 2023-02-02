@@ -89,9 +89,7 @@ app.get("/clearcookies", (req, res) => {
 
 
 app.get("/", (req, res) => {
-    if(req.cookies.cart === undefined) {
-        res.cookie('cart', []);
-    }
+    
 
     products = [];
     Product.find({category: { $lt: 9 }}, (err, foundProducts) => {
@@ -291,7 +289,9 @@ app.post("/deleteproduct/:id", (req, res) => {
 });
 
 app.post("/buyproduct/:id", (req, res) => {
-
+    if(req.cookies.cart === undefined) {
+        res.cookie('cart', []);
+    }
 
     if(!req.user) {
 
