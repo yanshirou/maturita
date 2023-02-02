@@ -20,9 +20,10 @@
     <nav class="navbar bg-light">
         <div class="container-fluid justify-content-center row">
             <a class="navbar-brand logo col" href="/">PostavPC</a>
-            <form action="#" class="d-flex fs-5 col-6">
-                <input class="form-control me-2" placeholder="Čo hľadáte ?">
-                <button class="btn btn-outline-primary me-2">Hľadať</button>
+
+            <form action="/search" method="get" class="d-flex fs-5 col-6">
+                <input type="text" name="q" class="form-control me-2" placeholder="Čo hľadáte ?">
+                <button type="submit" class="btn btn-outline-primary me-2">Hľadať</button>
             </form>
             <% if(typeof user !== 'undefined') {%>
                 <a href="/profile" class="nav-link col"><i class="fa-solid fa-user"></i> <%= user.username %></a>

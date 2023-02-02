@@ -8,11 +8,12 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const e = require("express");
 const cookieParser = require('cookie-parser');
+const nodemailer = require('nodemailer');
 
 const app = express();
 
 app.set('view engine', 'ejs');
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static("public"));
 app.use(session({
@@ -20,6 +21,24 @@ app.use(session({
     resave: false,
     saveUninitialized: false // Toto potom checkni neviem teraz
 }));
+
+//nodemailer transporter
+const transporter = nodemailer.createTransport({
+    host: 'smtp.zoznam.sk',
+    port: 587,
+    auth: {
+        user: 'postavpc@zoznam.sk',
+        pass: 'HesloHesiel123',
+    },
+});
+transporter.verify((err, success) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log('Transporter verified');
+    }
+})
+
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -69,35 +88,45 @@ passport.deserializeUser(User.deserializeUser());
 
 //temp
 app.get("/cookies", (req, res) => {
-    if (req.isAuthenticated()){
-        if (req.user.isAdmin) {
-            res.send(req.cookies);
-        } else {
-            res.redirect("/");
-            console.log("FORBIDDEN: NOT AN ADMIN");
-        }
-    } else {
-        res.redirect("/login");
-        console.log("FORBIDDEN: NOT LOGGED IN");
-    }
+    res.send(req.cookies);
+
 })
 //temp
 app.get("/clearcookies", (req, res) => {
-    res.clearCookie('cookiesAccepted');
     res.clearCookie('cookiePreference');
+    res.clearCookie('cart');
     res.redirect("/cookies")
 })
+//temp
+app.get("/sendmail", (req, res) => {
+    let mailOptions = {
+        from: 'postavpc@zoznam.sk',
+        to: 'peter.michalik235@gmail.com',
+        subject: 'Vitaj na PostavPC',
+        text: 'Bol si uspesne zaregistrovany ty vandrak'
+    };
 
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+    res.redirect("/");
+})
 
 app.get("/", (req, res) => {
-    
+    if (req.cookies.cart === undefined) {
+        res.cookie('cart', []);
+    }
 
     products = [];
-    Product.find({category: { $lt: 9 }}, (err, foundProducts) => {
-    //Product.find({_id: "637eaca243130301784871b9"}, (err, foundProducts) => {
-        if(!err){
+    Product.find({ category: { $lt: 9 } }, (err, foundProducts) => {
+        //Product.find({_id: "637eaca243130301784871b9"}, (err, foundProducts) => {
+        if (!err) {
             foundProducts.forEach(foundProduct => products.push(foundProduct))
-            res.render("home", {products: products, user: req.user, cookiePopup: req.cookies.cookiePreference})
+            res.render("home", { products: products, user: req.user, cookiePopup: req.cookies.cookiePreference })
         } else {
             console.log(err);
         }
@@ -106,21 +135,21 @@ app.get("/", (req, res) => {
 
 app.get("/categories/:category", (req, res) => {
     let category = req.params.category;
-    Product.find({category: category}, (err, foundProducts) => {
-        if(err){
+    Product.find({ category: category }, (err, foundProducts) => {
+        if (err) {
             console.log(err);
         } else {
-            res.render("home", {products: foundProducts, user: req.user, cookiePopup: req.cookies.cookiePreference});
+            res.render("home", { products: foundProducts, user: req.user, cookiePopup: req.cookies.cookiePreference });
         }
     })
 })
 
 
-    // ADDING A NEW PRODUCT
+// ADDING A NEW PRODUCT
 app.get("/newprod", (req, res) => {
-    if (req.isAuthenticated()){
+    if (req.isAuthenticated()) {
         if (req.user.isAdmin) {
-            res.render("newprod", {user: req.user});
+            res.render("newprod", { user: req.user });
         } else {
             res.redirect("/");
             console.log("FORBIDDEN: NOT AN ADMIN");
@@ -131,7 +160,7 @@ app.get("/newprod", (req, res) => {
     }
 })
 
-    // LOGIN AND REGISTER PAGE
+// LOGIN AND REGISTER PAGE
 app.get("/login", (req, res) => {
     res.render("login");
 })
@@ -141,54 +170,55 @@ app.get("/register", (req, res) => {
 })
 
 app.get("/profile", (req, res) => {
-    if (req.isAuthenticated()){
-        res.render("profile", {user: req.user})
+    if (req.isAuthenticated()) {
+        res.render("profile", { user: req.user })
     } else {
         res.redirect("/login");
     }
 })
 
-
+//PRODUKTOVA STRANKA
 app.get("/product/:id", (req, res) => {
     let id = req.params.id;
     Product.findById(id, (err, foundProduct) => {
-        if(!err){
-            res.render("product", {user: req.user, product: foundProduct});
+        if (!err) {
+            res.render("product", { user: req.user, product: foundProduct });
         } else {
             console.log(err);
         }
     })
-    
+
 })
 
+//KOSIK
 app.get("/cart", (req, res) => {
-    if(req.user) {
+    if (req.user) {
         User.findById(req.user._id, (err, foundUser) => {
-            if(!err) {
+            if (!err) {
                 let itemIDs = foundUser.cart;
-    
-    
+
+
                 Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
-                    if(!err) {
-                        res.render("cart", {user: req.user, products: foundItems});
+                    if (!err) {
+                        res.render("cart", { user: req.user, products: foundItems });
                     } else {
                         console.log(err);
                     }
-                    
+
                 });
-            
-                
+
+
             } else {
                 console.log(err);
             }
         })
     }
-    
-    if(!req.user) {
+
+    if (!req.user) {
         let itemIDs = req.cookies.cart
         Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
-            if(!err) {
-                res.render("cart", {user: req.user, products: foundItems});
+            if (!err) {
+                res.render("cart", { user: req.user, products: foundItems });
             } else {
                 console.log(err);
             }
@@ -197,17 +227,46 @@ app.get("/cart", (req, res) => {
 
 })
 
-app.get("/cookiePreference", (req, res) => {
+app.get("/search", (req, res) => {
+    let query = req.query.q;
+
+    Product.find({ $or: [{ name: { $regex: query } }, { desc: { $regex: query } }] }, (err, foundProducts) => {
+        if (!err) {
+            console.log(foundProducts);
+            res.render("home", { products: foundProducts, user: req.user, cookiePopup: req.cookies.cookiePreference })
+        } else {
+            console.log(err);
+        }
+    });
+
+})
+
+
+app.post("/cookiePreference", (req, res) => {
     //console.log(req.query.cookiePreference);
     res.cookie('cookiePreference', req.query.cookiePreference);
     res.redirect('/');
 })
 
 app.post("/register", (req, res) => {
-    User.register({username: req.body.username, email: req.body.email}, req.body.password, (err, newUser) => {
-        if(!err){
+    User.register({ username: req.body.username, email: req.body.email }, req.body.password, (err, newUser) => {
+        if (!err) {
             passport.authenticate("local")(req, res, () => {
-                // console.log(req.user);
+
+                let mailOptions = {
+                    from: 'postavpc@zoznam.sk',
+                    to: req.body.email,
+                    subject: 'Vitaj na PostavPC!',
+                    text: 'Registrácia prebehla úspešne, prajeme šťastné nakupovanie!'
+                };
+
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
                 res.redirect("/profile")
             })
         } else {
@@ -223,7 +282,7 @@ app.post("/login", (req, res) => {
         password: req.body.password
     });
     req.login(user, (err) => {
-        if(!err) {
+        if (!err) {
             passport.authenticate("local")(req, res, () => {
                 res.redirect("/profile");
             })
@@ -233,16 +292,16 @@ app.post("/login", (req, res) => {
     })
 })
 
-app.post('/logout', function(req, res){
-    req.logout(function(err) {
-        if(!err){
+app.post('/logout', function (req, res) {
+    req.logout(function (err) {
+        if (!err) {
             res.redirect('/');
         } else {
             console.log(err);
         }
-        
+
     });
-  });
+});
 
 
 app.post("/newprod", (req, res) => {
@@ -256,7 +315,7 @@ app.post("/newprod", (req, res) => {
         img: req.body.newProdImg
     });
     newProd.save((err) => {
-        if(!err){
+        if (!err) {
             res.redirect("/");
             console.log("Added a new product");
         } else {
@@ -268,11 +327,11 @@ app.post("/newprod", (req, res) => {
 app.post("/deleteproduct/:id", (req, res) => {
     //console.log(req.params.findById);
     let id = req.params.id;
-    
+
     if (req.isAuthenticated()) {
         if (req.user.isAdmin) {
             Product.findByIdAndDelete(id, (err, deletedItem) => {
-                if(!err) {
+                if (!err) {
                     console.log("Deleted product: " + id);
                     res.redirect("/")
                 } else {
@@ -290,27 +349,25 @@ app.post("/deleteproduct/:id", (req, res) => {
 });
 
 app.post("/buyproduct/:id", (req, res) => {
-    if(req.cookies.cart === undefined) {
-        res.cookie('cart', []);
-    }
 
-    if(!req.user) {
+
+    if (!req.user) {
 
         let id = req.params.id;
-        let cart = req.cookies.cart;
+        let cart = req.cookies.cart
         //console.log(cart);
-        
+
         cart.push(id);
         res.cookie('cart', cart)
         res.redirect('/cart');
     }
 
-    if(req.user) {
+    if (req.user) {
         let id = req.params.id;
         userId = req.user._id;
-    
-        User.findByIdAndUpdate(userId, {$push: { cart: id }}, (err, foundUser) => {
-            if(!err) {
+
+        User.findByIdAndUpdate(userId, { $push: { cart: id } }, (err, foundUser) => {
+            if (!err) {
                 console.log("Added item to cart");
                 res.redirect("/cart");
             } else {
@@ -318,7 +375,7 @@ app.post("/buyproduct/:id", (req, res) => {
             }
         })
     }
-    
+
 })
 
 app.listen(PORT, () => {
