@@ -24,6 +24,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+let PORT = process.env.PORT;
 const uri = "mongodb+srv://admin-yanshiro:" + process.env.DATABASE_PASSWORD + "@cluster0.bwelaio.mongodb.net/eshopDB"
 mongoose.connect(uri);
 
@@ -320,6 +321,6 @@ app.post("/buyproduct/:id", (req, res) => {
     
 })
 
-app.listen(3000, () => {
-    console.log("Server running at port 3000");
+app.listen(PORT, () => {
+    console.log("Server running at port " + PORT);
 });
