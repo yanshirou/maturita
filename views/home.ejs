@@ -1,8 +1,29 @@
 <%- include('partials/header', {user: user}); %>
     <div class="content row">
-
+    
 
     <%- include('partials/sidenav'); %>
+    
+
+    <% if(!cookiePopup) { %> 
+        <div id="simple-cookie-consent">
+            <div class="cookie-consent-container">
+              <div class="cookie-consent-notice">
+                <h4>Vaše preferencie cookies 🍪</h4>
+                <hr>
+                <p>Táto webová stránka používa súbory cookies. Vaše nastavenia môžete zmeniť nižšie, alebo si prečítajte našu <a href="#">Cookie Policy</a>.</p>
+              </div>
+              <div class="cookie-consent-selection">
+        
+                <form action="/cookiePreference" method="get">
+                    <button name="cookiePreference" value="false" class="cookie-consent-deny">Iba nevyhnutné</button>
+                    <button name="cookiePreference" value="true" class="cookie-consent-allow">Povoliť všetky cookies</button>
+                </form>
+        
+              </div>
+            </div>
+        </div>
+    <% } %> 
 
     <div class="products col-10">
         <% for(let index = 0; index < products.length; index++){ %>

@@ -68,7 +68,23 @@ passport.deserializeUser(User.deserializeUser());
 
 //temp
 app.get("/cookies", (req, res) => {
-    res.send(req.cookies);
+    if (req.isAuthenticated()){
+        if (req.user.isAdmin) {
+            res.send(req.cookies);
+        } else {
+            res.redirect("/");
+            console.log("FORBIDDEN: NOT AN ADMIN");
+        }
+    } else {
+        res.redirect("/login");
+        console.log("FORBIDDEN: NOT LOGGED IN");
+    }
+})
+//temp
+app.get("/clearcookies", (req, res) => {
+    res.clearCookie('cookiesAccepted');
+    res.clearCookie('cookiePreference');
+    res.redirect("/cookies")
 })
 
 
@@ -82,7 +98,7 @@ app.get("/", (req, res) => {
     //Product.find({_id: "637eaca243130301784871b9"}, (err, foundProducts) => {
         if(!err){
             foundProducts.forEach(foundProduct => products.push(foundProduct))
-            res.render("home", {products: products, user: req.user})
+            res.render("home", {products: products, user: req.user, cookiePopup: req.cookies.cookiePreference})
         } else {
             console.log(err);
         }
@@ -95,7 +111,7 @@ app.get("/categories/:category", (req, res) => {
         if(err){
             console.log(err);
         } else {
-            res.render("home", {products: foundProducts, user: req.user});
+            res.render("home", {products: foundProducts, user: req.user, cookiePopup: req.cookies.cookiePreference});
         }
     })
 })
@@ -182,6 +198,11 @@ app.get("/cart", (req, res) => {
 
 })
 
+app.get("/cookiePreference", (req, res) => {
+    //console.log(req.query.cookiePreference);
+    res.cookie('cookiePreference', req.query.cookiePreference);
+    res.redirect('/');
+})
 
 app.post("/register", (req, res) => {
     User.register({username: req.body.username, email: req.body.email}, req.body.password, (err, newUser) => {
