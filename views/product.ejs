@@ -1,12 +1,12 @@
 <%- include('partials/header', {user: user}); %>
     <div class="content row">
 
-       <div class="tab row">
+      <div class="tab row">
          <div class="col-6">
             <img class="product-image" src="<%=product.img%>" alt="product-image">
         </div>
          <div class="col-6">
-            <h1><%=product.name%></h1>
+            <h1><b><%=product.name%></b></h1>
             <p><%=product.desc%></p>
             <span class="price"><%=product.price.toFixed(2)%> €</span>
 
@@ -24,7 +24,52 @@
                <% } %> 
            <% } %>
          </div>
-       </div>
+      </div>
+      <div class="tab row">
+         <h2>Recenzie</h2>
+         <% for(let i = 0; i < product.reviews.length; i++) { %> 
+            <div class="review tab">
+               <div><% for(let j = 0; j < product.reviews[i].stars; j++) {%>
+                  <i class="fa-solid fa-star"></i>
+                  <% } %>
+                  <% for(let j = 0; j < 5 - product.reviews[i].stars; j++) {%>
+                     <i class="fa-regular fa-star"></i>
+                     <% } %>
+               </div>
+               <p>by <b><%= product.reviews[i].user.username%></b></p>
+               <p class="reviewBody"><%= product.reviews[i].comment%></p>
+            </div>
+
+
+         <% } %> 
+      </div>
+      <div class="tab row">
+         <h3>Napísať recenziu</h3>
+         <form action="/review/<%=product._id%>" method="post">
+            <div class="form-group">
+               <label for="stars">Ako ste s produktom spokojní ?</label>
+               <select class="form-control star-rating form-select" name="stars" required>
+                  <option value="5" selected>⭐⭐⭐⭐⭐</option>
+                  <option value="4">⭐⭐⭐⭐</option>
+                  <option value="3">⭐⭐⭐</option>
+                  <option value="2">⭐⭐</option>
+                  <option value="1">⭐</option>
+               </select>
+            </div>
+            <div class="form-group">
+               <label for="comment">Popíšte tento produkt</label>
+               <textarea class="form-control" name="comment" id="comment" cols="110" rows="3"></textarea>
+            </div>
+            
+
+           <button type="submit" class="btn btn-primary">Ohodnotiť</button>
+         </form>
+         
+         
+         
+      </div>
+
+
 
     </div>
         

@@ -28,12 +28,12 @@ const transporter = nodemailer.createTransport({
     port: 587,
     auth: {
         user: 'postavpc@zoznam.sk',
-        pass: process.env.SMTP_PASS,
+        pass: 'HesloHesiel123',
     },
 });
 transporter.verify((err, success) => {
     if(err) {
-        console.log(err);
+        //console.log(err);
     } else {
         console.log('Transporter verified');
     }
@@ -58,7 +58,12 @@ const productSchema = new mongoose.Schema({
         max: 5
     },
     price: Number,
-    img: String
+    img: String,
+    reviews: [{
+        userID: mongoose.ObjectId,
+        stars: Number,
+        comment: String
+    }]
 })
 
 const userSchema = new mongoose.Schema({
@@ -178,16 +183,31 @@ app.get("/profile", (req, res) => {
 })
 
 //PRODUKTOVA STRANKA
-app.get("/product/:id", (req, res) => {
-    let id = req.params.id;
-    Product.findById(id, (err, foundProduct) => {
-        if (!err) {
-            res.render("product", { user: req.user, product: foundProduct });
-        } else {
-            console.log(err);
-        }
-    })
+app.get("/product/:id", async (req, res) => {
+    let productID = req.params.id;
 
+
+    let foundProduct = await Product.findById(productID);
+
+
+    for(let i = 0; i < foundProduct.reviews.length; i++) {
+
+        let foundUser = await User.findById(foundProduct.reviews[i].userID);
+        console.log(foundProduct.reviews[i]);
+
+        //foundProduct.reviews[i].authorUsername = foundUser.username;
+        foundProduct.reviews[i].user = foundUser;
+
+    }
+
+
+    console.log(foundProduct);
+    for(review of foundProduct.reviews) {
+        console.log(review.user);
+    }
+
+    res.render("product", { user: req.user, product: foundProduct });
+    
 })
 
 //KOSIK
@@ -377,6 +397,40 @@ app.post("/buyproduct/:id", (req, res) => {
     }
 
 })
+
+
+app.post("/review/:id", (req, res) => {
+    console.log(req.body);
+    let productId = req.params.id;
+    // let author = req.user._id;
+    // let stars = req.body.stars;
+    // let review = req.body.review;
+
+    // console.log(productId);
+    // console.log(author);
+    // console.log(stars);
+    // console.log(review);
+
+    let objReview = {
+        userID: req.user._id,
+        stars: req.body.stars,
+        comment: req.body.comment
+    }
+
+    Product.findByIdAndUpdate(productId, {$push: {reviews: objReview}}, (err, foundProduct) => {
+        if(!err) {
+            console.log("Added a review: " + objReview);
+        } else {
+            console.log(err);
+        }
+    })
+
+    res.redirect("/");
+})
+
+
+
+
 
 app.listen(PORT, () => {
     console.log("Server running at port " + PORT);
