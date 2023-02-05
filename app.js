@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-const e = require("express");
 const cookieParser = require('cookie-parser');
 const nodemailer = require('nodemailer');
 
@@ -28,12 +27,12 @@ const transporter = nodemailer.createTransport({
     port: 587,
     auth: {
         user: 'postavpc@zoznam.sk',
-        pass: 'HesloHesiel123',
+        pass: 'HesloHesiel1234',
     },
 });
 transporter.verify((err, success) => {
-    if(err) {
-        //console.log(err);
+    if (err) {
+        console.log(err);
     } else {
         console.log('Transporter verified');
     }
@@ -94,7 +93,7 @@ passport.deserializeUser(User.deserializeUser());
 //temp
 app.get("/cookies", (req, res) => {
     res.send(req.cookies);
-        
+
 })
 //temp
 app.get("/clearcookies", (req, res) => {
@@ -106,7 +105,7 @@ app.get("/clearcookies", (req, res) => {
 app.get("/sendmail", (req, res) => {
     let mailOptions = {
         from: 'postavpc@zoznam.sk',
-        to: 'peter.michalik235@gmail.com',
+        to: 'peter.michalik230@gmail.com',
         subject: 'Vitaj na PostavPC',
         text: 'Bol si uspesne zaregistrovany ty vandrak'
     };
@@ -190,7 +189,7 @@ app.get("/product/:id", async (req, res) => {
     let foundProduct = await Product.findById(productID);
 
 
-    for(let i = 0; i < foundProduct.reviews.length; i++) {
+    for (let i = 0; i < foundProduct.reviews.length; i++) {
 
         let foundUser = await User.findById(foundProduct.reviews[i].userID);
         console.log(foundProduct.reviews[i]);
@@ -202,12 +201,12 @@ app.get("/product/:id", async (req, res) => {
 
 
     console.log(foundProduct);
-    for(review of foundProduct.reviews) {
+    for (review of foundProduct.reviews) {
         console.log(review.user);
     }
 
     res.render("product", { user: req.user, product: foundProduct });
-    
+
 })
 
 //KOSIK
@@ -250,8 +249,8 @@ app.get("/cart", (req, res) => {
 app.get("/search", (req, res) => {
     let query = req.query.q;
 
-    Product.find({$or: [{name: {$regex: query}}, {desc: {$regex: query}}]}, (err, foundProducts) => {
-        if(!err) {
+    Product.find({ $or: [{ name: { $regex: query } }, { desc: { $regex: query } }] }, (err, foundProducts) => {
+        if (!err) {
             console.log(foundProducts);
             res.render("home", { products: foundProducts, user: req.user, cookiePopup: req.cookies.cookiePreference })
         } else {
@@ -263,8 +262,7 @@ app.get("/search", (req, res) => {
 
 
 app.post("/cookiePreference", (req, res) => {
-    //console.log(req.query.cookiePreference);
-    res.cookie('cookiePreference', req.query.cookiePreference);
+    res.cookie('cookiePreference', req.body.cookiePreference);
     res.redirect('/');
 })
 
@@ -369,7 +367,7 @@ app.post("/deleteproduct/:id", (req, res) => {
 });
 
 app.post("/buyproduct/:id", (req, res) => {
-    
+
 
     if (!req.user) {
 
@@ -400,32 +398,30 @@ app.post("/buyproduct/:id", (req, res) => {
 
 
 app.post("/review/:id", (req, res) => {
-    console.log(req.body);
-    let productId = req.params.id;
-    // let author = req.user._id;
-    // let stars = req.body.stars;
-    // let review = req.body.review;
+    if (req.isAuthenticated()) {
+        let productId = req.params.id;
 
-    // console.log(productId);
-    // console.log(author);
-    // console.log(stars);
-    // console.log(review);
 
-    let objReview = {
-        userID: req.user._id,
-        stars: req.body.stars,
-        comment: req.body.comment
+        let objReview = {
+            userID: req.user._id,
+            stars: req.body.stars,
+            comment: req.body.comment
+        }
+
+        Product.findByIdAndUpdate(productId, { $push: { reviews: objReview } }, (err, foundProduct) => {
+            if (!err) {
+                console.log("Added a review: " + objReview);
+            } else {
+                console.log(err);
+            }
+        })
+
+        res.redirect("/product/" + productId);
+    } else {
+        res.redirect("/login");
+        console.log("FORBIDDEN: NOT LOGGED IN");
     }
 
-    Product.findByIdAndUpdate(productId, {$push: {reviews: objReview}}, (err, foundProduct) => {
-        if(!err) {
-            console.log("Added a review: " + objReview);
-        } else {
-            console.log(err);
-        }
-    })
-
-    res.redirect("/");
 })
 
 

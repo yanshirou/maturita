@@ -5,7 +5,7 @@
     <%- include('partials/sidenav'); %>
     
 
-    <% if(!cookiePopup) { %> 
+    <% if(!cookiePopup || cookiePopup === 'undefined') { %> 
         <div id="simple-cookie-consent">
             <div class="cookie-consent-container">
               <div class="cookie-consent-notice">
