@@ -4,6 +4,7 @@
 
 .content{
     padding: 10px 15% 0;
+    flex: 1;
 }
 
 
@@ -15,6 +16,10 @@ body {
     background: linear-gradient(180deg, rgba(248,249,250,1) 100px, #ff8888 300px);
 
     overflow-x: hidden;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .logo {
@@ -134,15 +139,26 @@ p {
     background-color: rgba(85, 85, 85, 0.1);
 }
 
-.product-image{
+.product-image {
     width: 100%;
+    border: 1px solid;
+    border-radius: 0.375rem;
 }
 
+.cart-name>h1 {
+    font-size: 20px;
+    color: black;
+}
+
+.cart-name>p {
+    color:#15af39;
+}
+
+
 footer {
-    margin: 75px 15% 0;
-    height: 200px;
+    margin-top: 75px;
+    height: 180px;
     background-color: rgb(153, 79, 79);
-    border-radius: 0.375rem;
     text-align: center;
     padding: 1.5% 0;
 
@@ -180,6 +196,13 @@ footer>p {
 
 .reviewBody {
     font-size: 20px;
+}
+
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
 }
 
 #simple-cookie-consent {

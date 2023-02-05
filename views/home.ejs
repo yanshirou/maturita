@@ -1,5 +1,5 @@
 <%- include('partials/header', {user: user}); %>
-    <div class="content row">
+<div class="content row">
     
 
     <%- include('partials/sidenav'); %>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="my-card-footer">
                     <span class="price"><%=products[index].price.toFixed(2)%> €</span>
-                    <form action="/buyproduct/<%=products[index]._id%>" method="post">
+                    <form action="/addtocart/<%=products[index]._id%>" method="post">
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Kúpiť</button>
                      </form>
                 </div>

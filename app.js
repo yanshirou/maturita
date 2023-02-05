@@ -130,7 +130,7 @@ app.get("/", (req, res) => {
         //Product.find({_id: "637eaca243130301784871b9"}, (err, foundProducts) => {
         if (!err) {
             foundProducts.forEach(foundProduct => products.push(foundProduct))
-            res.render("home", { products: products, user: req.user, cookiePopup: req.cookies.cookiePreference })
+            res.render("home", { products: products.reverse(), user: req.user, cookiePopup: req.cookies.cookiePreference })
         } else {
             console.log(err);
         }
@@ -143,7 +143,7 @@ app.get("/categories/:category", (req, res) => {
         if (err) {
             console.log(err);
         } else {
-            res.render("home", { products: foundProducts, user: req.user, cookiePopup: req.cookies.cookiePreference });
+            res.render("home", { products: foundProducts.reverse(), user: req.user, cookiePopup: req.cookies.cookiePreference });
         }
     })
 })
@@ -260,7 +260,6 @@ app.get("/search", (req, res) => {
 
 })
 
-
 app.post("/cookiePreference", (req, res) => {
     res.cookie('cookiePreference', req.body.cookiePreference);
     res.redirect('/');
@@ -334,7 +333,8 @@ app.post("/newprod", (req, res) => {
     });
     newProd.save((err) => {
         if (!err) {
-            res.redirect("/");
+            console.log(newProd);
+            res.redirect("/product/" + newProd._id);
             console.log("Added a new product");
         } else {
             console.log(err);
@@ -366,7 +366,7 @@ app.post("/deleteproduct/:id", (req, res) => {
     }
 });
 
-app.post("/buyproduct/:id", (req, res) => {
+app.post("/addtocart/:id", (req, res) => {
 
 
     if (!req.user) {
@@ -386,7 +386,7 @@ app.post("/buyproduct/:id", (req, res) => {
 
         User.findByIdAndUpdate(userId, { $push: { cart: id } }, (err, foundUser) => {
             if (!err) {
-                console.log("Added item to cart");
+                console.log("Added item to cart | " + foundUser.username);
                 res.redirect("/cart");
             } else {
                 console.log(err);
@@ -394,6 +394,41 @@ app.post("/buyproduct/:id", (req, res) => {
         })
     }
 
+})
+
+app.post("/removefromcart/:id", (req, res) => {
+    if (!req.user) {
+
+        let id = req.params.id;
+        let cart = req.cookies.cart
+        //console.log(cart);
+
+        
+        const index = cart.indexOf(id)
+        //console.log(index);
+        if(index > -1) {
+            cart.splice(index, 1);
+            console.log("Removed item from cart | no-acc");
+            
+        }
+        console.log(cart);
+        res.cookie("cart", cart);
+        res.redirect('/cart');
+    }
+
+    if (req.user) {
+        let id = req.params.id;
+        userId = req.user._id;
+
+        User.findByIdAndUpdate(userId, { $pull: { cart: id } }, (err, foundUser) => {
+            if (!err) {
+                console.log("Removed item from cart | " + foundUser.username);
+                res.redirect("/cart");
+            } else {
+                console.log(err);
+            }
+        })
+    }
 })
 
 

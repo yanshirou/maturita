@@ -1,22 +1,40 @@
 <%- include('partials/header', {user: user}); %>
-    <div class="content row">
+    <div class="content">
 
-       <div class="tab row">
-        <% for(let index = 0; index < products.length; index++){ %>
-            <div class="item row">
-                <div class="col-2">
-                    <img class="product-image" src="<%=products[index].img%>" alt="product-image">
+        <div class="tab row">
+            <% for(let index=0; index < products.length; index++){ %>
+                <div class="item row cart-item">
+                    <div class="col-2 cart-image">
+                        <img class="product-image" src="<%=products[index].img%>" alt="product-image">
+                    </div>
+                    <div class="col-4 cart-name">
+                        <h1>
+                            <%=products[index].name%>
+                        </h1>
+                        <p>
+                            Na sklade <%=products[index].stock%> kusov
+                        </p>
+                    </div>
+                    <div class="col-2">
+                        <span class="price"><%=products[index].price.toFixed(2)%> €</span>
+                    </div>
+                    <div class="col-2">
+                        <form action="/removefromcart/<%= products[index]._id%>" method="post">
+                            <button class="removeFromCartButton btn btn-danger">
+                                Odstrániť
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="col-10">
-                    <h1><%=products[index].name%></h1>
-                </div>
-            </div>
-        <% } %> 
-       </div>
+                <% } %>
+        </div>
+        <div class="tab row">
+            <h2>Sumár</h2>
+        </div>
 
     </div>
-        
 
-    
 
-<%- include('partials/footer'); %>
+
+
+    <%- include('partials/footer'); %>
