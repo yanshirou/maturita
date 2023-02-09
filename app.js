@@ -42,7 +42,6 @@ transporter.verify((err, success) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-let PORT = process.env.PORT;
 const uri = "mongodb+srv://admin-yanshiro:" + process.env.DATABASE_PASSWORD + "@cluster0.bwelaio.mongodb.net/eshopDB"
 mongoose.connect(uri);
 
@@ -192,7 +191,7 @@ app.get("/product/:id", async (req, res) => {
     for (let i = 0; i < foundProduct.reviews.length; i++) {
 
         let foundUser = await User.findById(foundProduct.reviews[i].userID);
-        console.log(foundProduct.reviews[i]);
+        //console.log(foundProduct.reviews[i]);
 
         //foundProduct.reviews[i].authorUsername = foundUser.username;
         foundProduct.reviews[i].user = foundUser;
@@ -200,7 +199,7 @@ app.get("/product/:id", async (req, res) => {
     }
 
 
-    console.log(foundProduct);
+    //console.log(foundProduct);
     for (review of foundProduct.reviews) {
         console.log(review.user);
     }
@@ -445,12 +444,12 @@ app.post("/review/:id", (req, res) => {
 
         Product.findByIdAndUpdate(productId, { $push: { reviews: objReview } }, (err, foundProduct) => {
             if (!err) {
-                console.log("Added a review: " + objReview);
+                console.log("Added a review: " + foundProduct);
             } else {
                 console.log(err);
             }
         })
-
+        //console.log(foundProduct);
         res.redirect("/product/" + productId);
     } else {
         res.redirect("/login");
@@ -463,6 +462,6 @@ app.post("/review/:id", (req, res) => {
 
 
 
-app.listen(PORT, () => {
-    console.log("Server running at port " + PORT);
+app.listen(process.env.PORT, () => {
+    console.log("Server running at port " + process.env.PORT);
 });

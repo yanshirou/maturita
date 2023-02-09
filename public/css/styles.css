@@ -260,3 +260,21 @@ footer>p {
 #simple-cookie-consent hr {
     margin: 15px 0;
 }
+
+
+
+
+@media only screen and (max-width: 800px) {
+    .card {
+        width: 100%;
+    }
+    .content {
+        margin: 0;
+    }
+    .products {
+        width: 100%;
+    }
+    .sidenav {
+        width: 100%
+    }
+}
