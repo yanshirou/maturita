@@ -32,7 +32,7 @@ const transporter = nodemailer.createTransport({
 });
 transporter.verify((err, success) => {
     if (err) {
-        console.log(err);
+        // console.log(err); Toto potom odkomentovat
     } else {
         console.log('Transporter verified');
     }
@@ -72,12 +72,18 @@ const userSchema = new mongoose.Schema({
     cart: [String]
 })
 
+const couponSchema = new mongoose.Schema({
+    name: String,
+    value: Number
+})
+
 userSchema.plugin(passportLocalMongoose);
 
 const Product = mongoose.model("Product", productSchema);
 
 const User = mongoose.model("User", userSchema);
 
+const Coupon = mongoose.model("Coupon", couponSchema)
 passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
@@ -210,6 +216,23 @@ app.get("/product/:id", async (req, res) => {
 
 //KOSIK
 app.get("/cart", (req, res) => {
+    let coupon = req.query.coupon;
+    let discount = 0;
+
+    if(req.query.coupon){
+        Coupon.find({name: coupon}, (err, foundCoupon) => {
+            if(!err) {
+                //console.log(foundCoupon);
+                if(foundCoupon.length > 0){
+                    discount = foundCoupon[0].value;
+                    //console.log(discount);
+                }
+            } else {
+                console.log(err);
+            }
+        })
+    }
+
     if (req.user) {
         User.findById(req.user._id, (err, foundUser) => {
             if (!err) {
@@ -218,7 +241,15 @@ app.get("/cart", (req, res) => {
 
                 Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
                     if (!err) {
-                        res.render("cart", { user: req.user, products: foundItems });
+                        let total = 0;
+                        foundItems.forEach((item) => {
+                            total = total + item.price;
+                        })
+                    
+                        total = total * (1 - (discount / 100))
+
+                        let noDPH = total * 0.8333;
+                        res.render("cart", { user: req.user, products: foundItems, total: total, noDPH: noDPH });
                     } else {
                         console.log(err);
                     }
@@ -236,7 +267,13 @@ app.get("/cart", (req, res) => {
         let itemIDs = req.cookies.cart
         Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
             if (!err) {
-                res.render("cart", { user: req.user, products: foundItems });
+                let total = 0;
+                foundItems.forEach((item) => {
+                    total = total + item.price;
+                })
+                total = total * (1 - (discount / 100))
+                let noDPH = 0.8333 * total;
+                res.render("cart", { user: req.user, products: foundItems, total: total, noDPH: noDPH});
             } else {
                 console.log(err);
             }
@@ -244,6 +281,57 @@ app.get("/cart", (req, res) => {
     }
 
 })
+
+// app.get("/coupon", (req, res) => {
+
+//     console.log(req.query);
+
+
+
+//     if (req.user) {
+//         User.findById(req.user._id, (err, foundUser) => {
+//             if (!err) {
+//                 let itemIDs = foundUser.cart;
+
+
+//                 Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
+//                     if (!err) {
+//                         let total = 0;
+//                         foundItems.forEach((item) => {
+//                             total = total + item.price;
+//                         })
+//                         console.log(total);
+//                         res.render("cart", { user: req.user, products: foundItems, total: total });
+//                     } else {
+//                         console.log(err);
+//                     }
+
+//                 });
+
+
+//             } else {
+//                 console.log(err);
+//             }
+//         })
+//     }
+
+//     if (!req.user) {
+//         let itemIDs = req.cookies.cart
+//         Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
+//             if (!err) {
+//                 let total = 0;
+//                 foundItems.forEach((item) => {
+//                     total = total + item.price;
+//                 })
+//                 console.log(total);
+//                 let noDPH = 0.833 * total;
+//                 res.render("cart", { user: req.user, products: foundItems, total: total, noDPH: noDPH});
+//             } else {
+//                 console.log(err);
+//             }
+//         })
+//     }
+// })
 
 app.get("/search", (req, res) => {
     let query = req.query.q;

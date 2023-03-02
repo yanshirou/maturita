@@ -2,6 +2,7 @@
     <div class="content">
 
         <div class="tab row">
+            <h2>Košík</h2>
             <% for(let index=0; index < products.length; index++){ %>
                 <div class="item row cart-item">
                     <div class="col-2 cart-image">
@@ -16,7 +17,7 @@
                         </p>
                     </div>
                     <div class="col-2">
-                        <span class="price"><%=products[index].price.toFixed(2)%> €</span>
+                        <p>1</p>
                     </div>
                     <div class="col-2">
                         <form action="/removefromcart/<%= products[index]._id%>" method="post">
@@ -25,11 +26,36 @@
                             </button>
                         </form>
                     </div>
+                    <div class="col-2">
+                        <span class="price"><%=products[index].price.toFixed(2)%> €</span>
+                    </div>
                 </div>
                 <% } %>
         </div>
         <div class="tab row">
             <h2>Sumár</h2>
+            <div class="sum">
+                <div class="sum-div">
+                    <form action="/cart" method="get">
+                        <div class="form-group">
+                            <label for="coupon">Zlavovy Kupon</label>
+                            <input class="form-control" type="text" id="coupon" name="coupon">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Uplatniť</button>
+                        
+                    </form>
+                    
+                </div>
+                <div class="sum-div">
+                    <p class="sum-text noDPH">Cena bez DPH:&nbsp&nbsp&nbsp&nbsp    <%=noDPH.toFixed(2)%> €</p>
+                    <p class="sum-text total">Celková cena:&nbsp&nbsp&nbsp&nbsp <%=total.toFixed(2)%> €</p>
+                </div>
+                
+            </div>
+            <div class="cart-buttons">
+                <h2>Helo</h2>
+            </div>
+            
         </div>
 
     </div>

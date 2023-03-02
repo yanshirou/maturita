@@ -180,7 +180,21 @@ footer>p {
     color: rgb(255, 202, 202);
 }
 
+.sum-text {
+    color: black;
+    font-size: 20px;
+    text-align: right;
+    padding-right: 15%;
+}
 
+.sum {
+    display: flex;
+    flex-direction: row;
+}
+
+.sum-div {
+    flex-grow: 1;
+}
 
 .star-rating {
     text-align: center;
