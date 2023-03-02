@@ -27,12 +27,12 @@ const transporter = nodemailer.createTransport({
     port: 587,
     auth: {
         user: 'postavpc@zoznam.sk',
-        pass: 'HesloHesiel1234',
+        pass: 'kX9wC4nB0',
     },
 });
 transporter.verify((err, success) => {
     if (err) {
-        // console.log(err); Toto potom odkomentovat
+        console.log(err)
     } else {
         console.log('Transporter verified');
     }
@@ -77,6 +77,16 @@ const couponSchema = new mongoose.Schema({
     value: Number
 })
 
+const orderSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    email: String,
+    street: String,
+    city: String,
+    postalCode: String,
+    items: Array
+})
+
 userSchema.plugin(passportLocalMongoose);
 
 const Product = mongoose.model("Product", productSchema);
@@ -84,6 +94,8 @@ const Product = mongoose.model("Product", productSchema);
 const User = mongoose.model("User", userSchema);
 
 const Coupon = mongoose.model("Coupon", couponSchema)
+
+const Order = mongoose.model("Order", orderSchema)
 passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
@@ -102,8 +114,9 @@ app.get("/cookies", (req, res) => {
 })
 //temp
 app.get("/clearcookies", (req, res) => {
-    res.clearCookie('cookiePreference');
-    res.clearCookie('cart');
+    //res.clearCookie('cookiePreference');
+    //res.clearCookie('cart');
+    res.clearCookie('coupon')
     res.redirect("/cookies")
 })
 //temp
@@ -132,7 +145,6 @@ app.get("/", (req, res) => {
 
     products = [];
     Product.find({ category: { $lt: 9 } }, (err, foundProducts) => {
-        //Product.find({_id: "637eaca243130301784871b9"}, (err, foundProducts) => {
         if (!err) {
             foundProducts.forEach(foundProduct => products.push(foundProduct))
             res.render("home", { products: products.reverse(), user: req.user, cookiePopup: req.cookies.cookiePreference })
@@ -216,21 +228,20 @@ app.get("/product/:id", async (req, res) => {
 
 //KOSIK
 app.get("/cart", (req, res) => {
-    let coupon = req.query.coupon;
-    let discount = 0;
+    coupon = {value: 0, name: "ziadny"}
 
-    if(req.query.coupon){
-        Coupon.find({name: coupon}, (err, foundCoupon) => {
+    if(req.cookies.coupon !== undefined) {
+        const couponId = req.cookies.coupon
+        Coupon.findById(couponId, (err, foundCoupon) => {
             if(!err) {
-                //console.log(foundCoupon);
-                if(foundCoupon.length > 0){
-                    discount = foundCoupon[0].value;
-                    //console.log(discount);
-                }
+                coupon = foundCoupon;
+
+                //console.log(coupon);
             } else {
                 console.log(err);
             }
-        })
+            
+        }) 
     }
 
     if (req.user) {
@@ -245,11 +256,11 @@ app.get("/cart", (req, res) => {
                         foundItems.forEach((item) => {
                             total = total + item.price;
                         })
-                    
-                        total = total * (1 - (discount / 100))
+
+                        total = total * (1 - (coupon.value / 100))
 
                         let noDPH = total * 0.8333;
-                        res.render("cart", { user: req.user, products: foundItems, total: total, noDPH: noDPH });
+                        res.render("cart", { user: req.user, products: foundItems, total: total, noDPH: noDPH, couponName: coupon.name });
                     } else {
                         console.log(err);
                     }
@@ -271,9 +282,10 @@ app.get("/cart", (req, res) => {
                 foundItems.forEach((item) => {
                     total = total + item.price;
                 })
-                total = total * (1 - (discount / 100))
+                total = total * (1 - (coupon.value / 100))
+
                 let noDPH = 0.8333 * total;
-                res.render("cart", { user: req.user, products: foundItems, total: total, noDPH: noDPH});
+                res.render("cart", { user: req.user, products: foundItems, total: total, noDPH: noDPH, couponName: coupon.name});
             } else {
                 console.log(err);
             }
@@ -282,56 +294,159 @@ app.get("/cart", (req, res) => {
 
 })
 
-// app.get("/coupon", (req, res) => {
+app.get("/checkout", (req, res) => {
+    let coupon = {value: 0, name: "ziadny"}
 
-//     console.log(req.query);
+    if(req.cookies.coupon !== undefined) {
+        const couponId = req.cookies.coupon
+        Coupon.findById(couponId, (err, foundCoupon) => {
+            if(!err) {
+                coupon = foundCoupon;
 
+            } else {
+                console.log(err);
+            }
+            
+        }) 
+    }
 
-
-//     if (req.user) {
-//         User.findById(req.user._id, (err, foundUser) => {
-//             if (!err) {
-//                 let itemIDs = foundUser.cart;
-
-
-//                 Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
-//                     if (!err) {
-//                         let total = 0;
-//                         foundItems.forEach((item) => {
-//                             total = total + item.price;
-//                         })
-//                         console.log(total);
-//                         res.render("cart", { user: req.user, products: foundItems, total: total });
-//                     } else {
-//                         console.log(err);
-//                     }
-
-//                 });
+    if (req.user) {
+        User.findById(req.user._id, (err, foundUser) => {
+            if (!err) {
+                let itemIDs = foundUser.cart;
 
 
-//             } else {
-//                 console.log(err);
-//             }
-//         })
-//     }
+                Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
+                    if (!err) {
+                        let total = 0;
+                        foundItems.forEach((item) => {
+                            total = total + item.price;
+                        })
+                    
+                        total = total * (1 - (coupon.value / 100))
 
-//     if (!req.user) {
-//         let itemIDs = req.cookies.cart
-//         Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
-//             if (!err) {
-//                 let total = 0;
-//                 foundItems.forEach((item) => {
-//                     total = total + item.price;
-//                 })
-//                 console.log(total);
-//                 let noDPH = 0.833 * total;
-//                 res.render("cart", { user: req.user, products: foundItems, total: total, noDPH: noDPH});
-//             } else {
-//                 console.log(err);
-//             }
-//         })
-//     }
-// })
+                        let noDPH = total * 0.8333;
+                        res.render("checkout", { user: req.user, products: foundItems, total: total, noDPH: noDPH });
+                    } else {
+                        console.log(err);
+                    }
+
+                });
+
+
+            } else {
+                console.log(err);
+            }
+        })
+    }
+
+    if (!req.user) {
+        let itemIDs = req.cookies.cart
+        Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
+            if (!err) {
+                let total = 0;
+                foundItems.forEach((item) => {
+                    total = total + item.price;
+                })
+                total = total * (1 - (coupon.value / 100))
+
+                let noDPH = 0.8333 * total;
+                res.render("checkout", { user: req.user, products: foundItems, total: total, noDPH: noDPH, couponName: coupon.name});
+            } else {
+                console.log(err);
+            }
+        })
+    }
+
+})
+
+
+app.post("/coupon", (req, res) => {
+    console.log("test");
+    let coupon = req.body.coupon;
+    console.log(req.body);
+    if(req.body.coupon){
+        Coupon.find({name: coupon}, (err, foundCoupon) => {
+            if(!err) {
+                // console.log(foundCoupon);
+                if(foundCoupon.length > 0){
+                    res.cookie('coupon', foundCoupon[0].id);
+                    res.redirect("/cart");
+                }
+            } else {
+                console.log(err);
+            }
+        })
+    }
+})
+
+app.post("/order", (req, res) => {
+    let newOrder;
+
+    if(!req.user) {
+   
+        newOrder = new Order({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            street: req.body.street,
+            city: req.body.city,
+            postalCode: req.body.postalCode,
+            items: req.cookies.cart
+        });
+    }
+
+    if(req.user) {
+        User.findById(req.user._id, (err, foundUser) => {
+            if (!err) {
+                newOrder = new Order({
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    email: req.body.email,
+                    street: req.body.street,
+                    city: req.body.city,
+                    postalCode: req.body.postalCode,
+                    items: foundUser.cart
+                });
+
+                newOrder.save((err) => {
+                    if (!err) {
+                        console.log(newOrder);
+                        console.log("Order sent");
+                        
+                    } else {
+                        console.log(err);
+                    }
+                });
+            } else {
+                console.log(err);
+            }
+        })
+        
+    }
+
+    let mailOptions = {
+        from: 'postavpc@zoznam.sk',
+        to: req.body.email,
+        subject: 'Objednávka odoslaná!',
+        text: 'Ďakujeme za Váš nákup.'
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
+    res.redirect("/");
+    
+    
+    
+
+})
+
 
 app.get("/search", (req, res) => {
     let query = req.query.q;
