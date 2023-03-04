@@ -1,15 +1,43 @@
-
 <%- include('partials/header', {user: user}); %>
     <div class="content">
-        <h1>Logged in as: <%= user.username %></h1>
+        <div class="tab row">
+            <h2>Prihlásený ako: <%= user.email %></h2>
+            
 
-        <form action="/" method="GET">  
-            <button class="btn btn-primary" type="submit">Domov</button>
-        </form>
-        <form action="/logout" method="POST">
-            <button class="btn btn-danger">Logout</button>
-        </form>
+            <div class="profile-buttons">
 
-        
+            
+                <form action="/" method="GET">
+                    <button class="btn btn-primary m-2" type="submit">Domov</button>
+                </form>
+                <form action="/logout" method="POST">
+                    <button class="btn btn-danger m-2">Odhlásiť sa</button>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="tab row">
+            <h2>Objednávky</h2>
+            <table>
+                <tbody class="orders-table">
+                    <tr>
+                        <th>ID objednávky</th>
+                        <th>Stav</th>
+                        <th>Dátum objednania</th>
+                    </tr>
+                    <% for(let i = 0; i < orders.length; i++) { %>
+                        <tr>
+                            <td><a href="/order/<%=orders[i]._id%>"><%=orders[i]._id%></a></td>
+                            <td><%=orders[i].status%></td>
+                            <% let date = new Date(orders[i].created); %>
+                            <td><%=date.getDate()%>.<%=date.getMonth()%>.<%=date.getFullYear()%></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+
     </div>
-<%- include('partials/footer'); %>
+    <%- include('partials/footer'); %>

@@ -246,7 +246,14 @@ footer>p {
     color: black;
 }
 
+.profile-buttons {
+    display: flex;
+}
 
+.orders-table tr {
+    border-bottom: solid 1px;
+    height: 50px;
+}
 
 #simple-cookie-consent {
     height: 100vh;

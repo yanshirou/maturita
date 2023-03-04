@@ -1,0 +1,28 @@
+<%- include('partials/header', {user: user}); %>
+    <div class="content">
+
+        <div class="tab row">
+            <h1>Objednávka</h1>
+            <% for(let index=0; index < products.length; index++){ %>
+                <div class="row cart-item">
+                    <div class="col-2 cart-image">
+                        <img class="product-image" src="<%=products[index].img%>" alt="product-image">
+                    </div>
+                    <div class="col-8 cart-name">
+                        <h1>
+                            <%=products[index].name%>
+                        </h1>
+                    </div>
+                    <div class="col-2">
+                        <span class="price"><%=products[index].price.toFixed(2)%> €</span>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+            
+    </div>
+
+
+
+
+    <%- include('partials/footer'); %>

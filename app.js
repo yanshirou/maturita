@@ -32,7 +32,7 @@ const transporter = nodemailer.createTransport({
 });
 transporter.verify((err, success) => {
     if (err) {
-        console.log(err)
+        // console.log(err) TOTO POTOM ODKOMENTOVAT
     } else {
         console.log('Transporter verified');
     }
@@ -84,7 +84,9 @@ const orderSchema = new mongoose.Schema({
     street: String,
     city: String,
     postalCode: String,
-    items: Array
+    items: Array,
+    status: String,
+    created: {type: Date, default: Date.now()}
 })
 
 userSchema.plugin(passportLocalMongoose);
@@ -187,12 +189,21 @@ app.get("/login", (req, res) => {
 })
 
 app.get("/register", (req, res) => {
-    res.render("register");
+    res.render("register", {usernameValidation: "", emailValidation: ""});
 })
 
 app.get("/profile", (req, res) => {
     if (req.isAuthenticated()) {
-        res.render("profile", { user: req.user })
+
+        Order.find({email: req.user.email}, (err, foundOrders) => {
+            if(!err) {
+                res.render("profile", { user: req.user, orders: foundOrders})
+            } else {
+                console.log(err);
+            }
+        })
+
+        
     } else {
         res.redirect("/login");
     }
@@ -360,17 +371,36 @@ app.get("/checkout", (req, res) => {
 
 })
 
+app.get("/order/:id", (req, res) => {
+    let id = req.params.id;
+    Order.findById(id, (err, foundOrder) => {
+        if(!err) {
+            itemIDs = foundOrder.items;
+            Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
+                if (!err) {
+                    // console.log(foundItems);
+                    res.render("order", {user: req.user, products: foundItems})
+                } else {
+                    console.log(err);
+                }
+            })
+            
+        } else {
+            console.log(err);
+        }
+    })
+})
 
 app.post("/coupon", (req, res) => {
-    console.log("test");
     let coupon = req.body.coupon;
-    console.log(req.body);
     if(req.body.coupon){
         Coupon.find({name: coupon}, (err, foundCoupon) => {
             if(!err) {
                 // console.log(foundCoupon);
                 if(foundCoupon.length > 0){
                     res.cookie('coupon', foundCoupon[0].id);
+                    res.redirect("/cart");
+                } else {
                     res.redirect("/cart");
                 }
             } else {
@@ -392,7 +422,8 @@ app.post("/order", (req, res) => {
             street: req.body.street,
             city: req.body.city,
             postalCode: req.body.postalCode,
-            items: req.cookies.cart
+            items: req.cookies.cart,
+            status: "Objednávka odoslaná"
         });
     }
 
@@ -406,7 +437,8 @@ app.post("/order", (req, res) => {
                     street: req.body.street,
                     city: req.body.city,
                     postalCode: req.body.postalCode,
-                    items: foundUser.cart
+                    items: foundUser.cart,
+                    status: "Objednávka odoslaná"
                 });
 
                 newOrder.save((err) => {
@@ -468,31 +500,40 @@ app.post("/cookiePreference", (req, res) => {
 })
 
 app.post("/register", (req, res) => {
-    User.register({ username: req.body.username, email: req.body.email }, req.body.password, (err, newUser) => {
-        if (!err) {
-            passport.authenticate("local")(req, res, () => {
 
-                let mailOptions = {
-                    from: 'postavpc@zoznam.sk',
-                    to: req.body.email,
-                    subject: 'Vitaj na PostavPC!',
-                    text: 'Registrácia prebehla úspešne, prajeme šťastné nakupovanie!'
-                };
-
-                transporter.sendMail(mailOptions, function (error, info) {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        console.log('Email sent: ' + info.response);
-                    }
-                });
-                res.redirect("/profile")
+    User.find({email: req.body.email}, (err, foundUser) => {
+        if(foundUser.length == 0) {
+            User.register({ username: req.body.username, email: req.body.email }, req.body.password, (err, newUser) => {
+                if (!err) {
+                    passport.authenticate("local")(req, res, () => {
+        
+                        let mailOptions = {
+                            from: 'postavpc@zoznam.sk',
+                            to: req.body.email,
+                            subject: 'Vitaj na PostavPC!',
+                            text: 'Registrácia prebehla úspešne, prajeme šťastné nakupovanie!'
+                        };
+        
+                        transporter.sendMail(mailOptions, function (error, info) {
+                            if (error) {
+                                console.log(error);
+                            } else {
+                                console.log('Email sent: ' + info.response);
+                            }
+                        });
+                        res.redirect("/profile")
+                    })
+                } else {
+                    console.log(err);
+                    res.render("register", {usernameValidation: "is-invalid", emailValidation: ""})
+                }
             })
         } else {
-            console.log(err);
-            res.redirect("/register")
+            res.render("register", {usernameValidation: "", emailValidation: "is-invalid"})
         }
     })
+
+    
 })
 
 app.post("/login", (req, res) => {

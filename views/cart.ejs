@@ -38,11 +38,13 @@
                 <div class="sum-div">
                     <form action="/coupon" method="post">
                         <div class="form-group">
-                            <label for="coupon">Zlavovy Kupon</label>
+                            <label for="coupon">Zľavový Kupón</label>
                             <input class="form-control" type="text" id="coupon" name="coupon">
                         </div>
                         <button type="submit" class="btn btn-primary">Uplatniť</button>
-                        <p>Uplatneny kupon: <%=couponName%></p>
+                        <% if(couponName !== 'ziadny') {%>
+                        <p>Uplatnený kupón: <%=couponName%></p>
+                        <% } %>
                     </form>
                     
                 </div>
@@ -54,7 +56,7 @@
             </div>
             <div class="cart-buttons">
                 <form action="/" method="get" class="back-btn">
-                    <button type="submit" class="btn btn-danger">Spať domov</button>
+                    <button type="submit" class="btn btn-danger">Späť domov</button>
                 </form>
                 <form action="/checkout" method="get" class="continue-btn">
                     <button type="submit" class="btn btn-primary">Pokračovať</button>
