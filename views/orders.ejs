@@ -1,0 +1,32 @@
+<%- include('partials/header', {user: user}); %>
+    <div class="content">
+
+        <div class="tab row">
+            <h1>Objednávky</h1>
+            <table>
+                <tbody class="orders-table">
+                    <tr>
+                        <th>ID objednávky</th>
+                        <th>Zákazník</th>
+                        <th>Stav</th>
+                        <th>Dátum objednania</th>
+                    </tr>
+                    <% for(let i = 0; i < orders.length; i++) { %>
+                        <tr>
+                            <td><a href="/order/<%=orders[i]._id%>"><%=orders[i]._id%></a></td>
+                            <td><%=orders[i].email%></td>
+                            <td><%=orders[i].status%></td>
+                            <% let date = new Date(orders[i].created); %>
+                            <td><%=date.getDate()%>.<%=date.getMonth()%>.<%=date.getFullYear()%></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+            
+    </div>
+
+
+
+
+    <%- include('partials/footer'); %>
