@@ -246,7 +246,7 @@ footer>p {
     color: black;
 }
 
-.profile-buttons {
+.profile-buttons, .product-buttons {
     display: flex;
 }
 

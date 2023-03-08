@@ -27,7 +27,7 @@ const transporter = nodemailer.createTransport({
     port: 587,
     auth: {
         user: 'postavpc@zoznam.sk',
-        pass: 'kX9wC4nB0',
+        pass: 'Nazdars1',
     },
 });
 transporter.verify((err, success) => {
@@ -53,7 +53,8 @@ const productSchema = new mongoose.Schema({
     rating: {
         type: Number,
         min: 0,
-        max: 5
+        max: 5,
+        default: 5
     },
     price: Number,
     img: String,
@@ -140,7 +141,7 @@ app.get("/sendmail", (req, res) => {
     res.redirect("/");
 })
 
-app.get("/", (req, res) => {
+app.get("/", function domov(req, res) {
     if (req.cookies.cart === undefined) {
         res.cookie('cart', []);
     }
@@ -370,6 +371,26 @@ app.get("/checkout", (req, res) => {
     }
 
 })
+
+
+app.get("/orders", (req, res) => {
+    if (req.isAuthenticated()) {
+        if (req.user.isAdmin) {
+            Order.find({}, (err, foundOrders) => {
+                res.render("orders", {user: req.user, orders: foundOrders});
+            })
+            
+        } else {
+            res.redirect("/");
+            console.log("FORBIDDEN: NOT AN ADMIN");
+        }
+    } else {
+        res.redirect("/");
+        console.log("FORBIDDEN: NOT LOGGED IN");
+    }
+    
+})
+
 
 app.get("/order/:id", (req, res) => {
     let id = req.params.id;
@@ -609,6 +630,18 @@ app.post("/deleteproduct/:id", (req, res) => {
     }
 });
 
+// app.post("/deletereview/:id", (req, res) => {
+//     let reviewID = req.params.id;
+
+//     Product.find({reviews: {$elemMatch: {_id: reviewID}}}, (err, foundProduct) => {
+//         Product.updateOne({_id: foundProduct._id}, {$pull: {reviews: }})
+//     })
+//     // console.log(product);
+    
+
+    
+// })
+
 app.post("/addtocart/:id", (req, res) => {
 
 
@@ -701,7 +734,6 @@ app.post("/review/:id", (req, res) => {
     }
 
 })
-
 
 
 
