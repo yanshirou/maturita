@@ -255,6 +255,24 @@ footer>p {
     height: 50px;
 }
 
+s, strike{text-decoration:none;position:relative;}
+s::before, strike::before {
+    top: 50%; /*tweak this to adjust the vertical position if it's off a bit due to your font family */
+    background:rgb(0, 0, 0); /*this is the color of the line*/
+    opacity: .7;
+    content: '';
+    width: 110%;
+    position: absolute;
+    height:.11em;
+    border-radius:.1em;
+    left: -5%;
+    white-space:nowrap;
+    display: block;
+    transform: rotate(-15deg);  
+}
+s.straight::before, strike.straight::before{transform: rotate(0deg);left:-1%;width:102%;}
+
+
 #simple-cookie-consent {
     height: 100vh;
     width: 100vw;
