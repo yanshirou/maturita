@@ -160,10 +160,11 @@ app.get("/", function domov(req, res) {
 app.get("/categories/:category", (req, res) => {
     let category = req.params.category;
     Product.find({ category: category }, (err, foundProducts) => {
-        if (err) {
-            console.log(err);
+        if (!err) {
+            console.log(category);
+            res.render("home", { products: foundProducts.reverse(), user: req.user, cookiePopup: req.cookies.cookiePreference, category: category });
         } else {
-            res.render("home", { products: foundProducts.reverse(), user: req.user, cookiePopup: req.cookies.cookiePreference });
+            console.log(err);
         }
     })
 })
