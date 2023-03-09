@@ -150,7 +150,7 @@ app.get("/", function domov(req, res) {
     Product.find({ category: { $lt: 9 } }, (err, foundProducts) => {
         if (!err) {
             foundProducts.forEach(foundProduct => products.push(foundProduct))
-            res.render("home", { products: products.reverse(), user: req.user, cookiePopup: req.cookies.cookiePreference })
+            res.render("home", { products: products.sort(() => {return Math.random() - 0.5}), user: req.user, cookiePopup: req.cookies.cookiePreference })
         } else {
             console.log(err);
         }
@@ -161,7 +161,7 @@ app.get("/categories/:category", (req, res) => {
     let category = req.params.category;
     Product.find({ category: category }, (err, foundProducts) => {
         if (!err) {
-            console.log(category);
+            // console.log(category);
             res.render("home", { products: foundProducts.reverse(), user: req.user, cookiePopup: req.cookies.cookiePreference, category: category });
         } else {
             console.log(err);

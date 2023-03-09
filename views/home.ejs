@@ -45,6 +45,7 @@
                     <% if(typeof category !== 'undefined') { %>
                         <% if (category == 9) { %>
                             <span class="price"><s><%=products[index].price.toFixed(2)%></s> €</span>
+                            <span class="price"><%=Math.round(products[index].price * 0.95 * 100) / 100%> €</span>
                         <% } else { %>
                             <span class="price"><%=products[index].price.toFixed(2)%> €</span>
                         <% } %>
