@@ -1,0 +1,55 @@
+<%- include('partials/header'); %>
+    <div class="content row">
+
+    
+    <%- include('partials/sidenav'); %>
+
+    <div class="tab col-10">
+        <form action="/editproduct/<%=product._id%>" method="post">
+            <div class="form-group">
+                <label for="newProdName">Názov</label>
+                    <input type="text" class="form-control" name="newProdName" value="<%=product.name%>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="newProdCategory">Kategória</label>
+                <select class="form-control" name="newProdCategory" required>
+                    <option value="">--- VYBERTE KATEGÓRIU ---</option>
+                    <option value="1" <% if(product.category == 1) { %> selected <% } %>>Grafické Karty</option>
+                    <option value="2" <% if(product.category == 2) { %> selected <% } %>>Procesory</option>
+                    <option value="3" <% if(product.category == 3) { %> selected <% } %>>Pamäte RAM</option>
+                    <option value="4" <% if(product.category == 4) { %> selected <% } %>>Disky a SSD</option>
+                    <option value="5" <% if(product.category == 5) { %> selected <% } %>>Základné dosky</option>
+                    <option value="6" <% if(product.category == 6) { %> selected <% } %>>PC Skrinky</option>
+                    <option value="7" <% if(product.category == 7) { %> selected <% } %>>Zdroje</option>
+                    <option value="8" <% if(product.category == 8) { %> selected <% } %>>Chladenie</option>
+                    <option value="9" <% if(product.category == 9) { %> selected <% } %>>Zľavy</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="newProdDescription">Popis</label>
+                    <textarea class="form-control" name="newProdDescription" id="newProdDescription" cols="110" rows="5" required><%=product.desc%></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="newProdStock">Kusov na sklade</label>
+                    <input type="number" class="form-control" name="newProdStock" value="<%=product.stock%>" required>
+            </div>
+
+
+            <div class="form-group">
+                <label for="newProdPrice">Cena</label>
+                    <input type="number" class="form-control" name="newProdPrice" step="any" min="0" value="<%=product.price%>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="newProdImg">URL na obrázok</label>
+                    <input type="text" class="form-control" name="newProdImg" value="<%=product.img%>" required>
+            </div>
+            <button type="submit" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i> Upraviť</button>
+        </form>
+    </div>
+
+    </div>
+<%- include('partials/footer'); %>
