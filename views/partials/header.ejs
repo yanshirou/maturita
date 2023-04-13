@@ -22,7 +22,7 @@
 
             <form action="/search" method="get" class="d-flex fs-5 col-6">
                 <input type="text" name="q" class="form-control me-2" placeholder="Čo hľadáte ?">
-                <button type="submit" class="btn btn-outline-primary me-2">Hľadať</button>
+                <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
             <% if(typeof user !== 'undefined') {%>
                 <a href="/profile" class="nav-link col"><i class="fa-solid fa-user"></i> <%= user.username %></a>
@@ -32,7 +32,15 @@
                 <a href="/login" class="nav-link col"><i class="fa-solid fa-arrow-right-to-bracket"></i> Prihlásiť sa</a>
                 <% } %>
 
-            <a href="/cart" class="nav-link col"><i class="fa-solid fa-basket-shopping"></i> Košík</a>
+            <% if(typeof user !== 'undefined') {%>
+                <a href="/cart" class="nav-link col"><i class="fa-solid fa-basket-shopping"></i> Košík (<%=user.cart.length%>)</a>
+    
+            <% } %>
+            <% if(typeof user == 'undefined') { %>
+                <a href="/cart" class="nav-link col"><i class="fa-solid fa-basket-shopping"></i> Košík</a>
+            <% } %>
+            
         </div>
+        
     </nav>
 

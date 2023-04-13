@@ -14,9 +14,16 @@
     <% if(typeof user !== 'undefined') { %>
         <% if(user.isAdmin) { %>
             <div class="sidenav-group">
-                <a href="/newprod">Pridať nový produkt</a>
-                <a href="/orders">Objednávky</a>
-                <a href="/cookies">Cookies</a> 
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
+                        Admin Menu
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                      <li><a class="dropdown-item" href="/newprod">Pridať nový produkt</a></li>
+                      <li><a class="dropdown-item" href="/orders">Objednávky</a></li>
+                      <li><a class="dropdown-item" href="/cookies">Cookies</a></li>
+                    </ul>
+                  </div>
             </div>
         <% } %> 
     <% } %>

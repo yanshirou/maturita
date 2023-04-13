@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-// cookies shit
+// cookies
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
@@ -18,7 +18,7 @@ app.use(express.static("public"));
 app.use(session({
     secret: "Toto potom treba dat do .env",
     resave: false,
-    saveUninitialized: false // Toto potom checkni neviem teraz
+    saveUninitialized: false
 }));
 
 //nodemailer transporter
@@ -27,12 +27,12 @@ const transporter = nodemailer.createTransport({
     port: 587,
     auth: {
         user: 'postavpc@zoznam.sk',
-        pass: 'Nazdars1',
+        pass: 'Nazdars2',
     },
 });
 transporter.verify((err, success) => {
     if (err) {
-        // console.log(err) TOTO POTOM ODKOMENTOVAT
+        console.log(err) // TOTO POTOM ODKOMENTOVAT
     } else {
         console.log('Transporter verified');
     }
@@ -249,7 +249,6 @@ app.get("/cart", (req, res) => {
             if(!err) {
                 coupon = foundCoupon;
 
-                //console.log(coupon);
             } else {
                 console.log(err);
             }
@@ -631,17 +630,38 @@ app.post("/deleteproduct/:id", (req, res) => {
     }
 });
 
-// app.post("/deletereview/:id", (req, res) => {
-//     let reviewID = req.params.id;
+app.get("/editproduct/:id", (req, res) => {
+    let id = req.params.id
 
-//     Product.find({reviews: {$elemMatch: {_id: reviewID}}}, (err, foundProduct) => {
-//         Product.updateOne({_id: foundProduct._id}, {$pull: {reviews: }})
-//     })
-//     // console.log(product);
-    
+    Product.findById(id, (err, foundProduct) => {
+        if(!err) {
+            res.render("editprod", {product:foundProduct});
+        } else {
+            console.log(err);
+        }
+        
+    })
 
-    
-// })
+});
+
+app.post("/editproduct/:id", (req, res) => {
+    let id = req.params.id;
+
+    let name = req.body.newProdName;
+    let category = req.body.newProdCategory
+    let desc = req.body.newProdDescription
+    let stock = req.body.newProdStock
+    let price = req.body.newProdPrice
+    let img = req.body.newProdImg
+
+    Product.updateOne({_id: id}, {$set: {name: name, category: category, desc: desc, stock: stock, price: price, img: img}}, (err, updatedProduct) => {
+        if(!err) {
+            res.redirect("/product/" + id);
+        } else {
+            console.log(err);
+        }
+    })
+})
 
 app.post("/addtocart/:id", (req, res) => {
 
