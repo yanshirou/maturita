@@ -6,9 +6,7 @@
             <% if(products.length == 0) { %>
                 <p style="text-align: center; font-size: 20px; margin-bottom: 50px;"><i class="fa-regular fa-circle-xmark"></i> Košík je zatiaľ prázdny</p>
             <% } %>
-            <% let total = 0; %>
             <% for(let index=0; index < products.length; index++){ %>
-                <% total += products[index].price; %>
                 <div class="row cart-item">
                     <div class="col-1 cart-image">
                         <img class="product-image" src="<%=products[index].img%>" alt="product-image">

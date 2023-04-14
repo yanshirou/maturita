@@ -341,6 +341,9 @@ s.straight::before, strike.straight::before{transform: rotate(0deg);left:-1%;wid
 
 
 @media only screen and (max-width: 800px) {
+    html {
+        text-align: center;
+    }
     .card {
         width: 100%;
     }
@@ -352,5 +355,24 @@ s.straight::before, strike.straight::before{transform: rotate(0deg);left:-1%;wid
     }
     .sidenav {
         width: 100%
+    }
+    .content {
+        padding: 0;
+    }
+    .container-fluid {
+        padding: 2%;
+    }
+    .container-fluid > * {
+        padding: 18px 10px;
+        width:100%;
+    }
+    .sidenav-group {
+        margin: 18px 0;
+    }
+    .navbar-brand {
+        font-size: 60px;
+    }
+    .row {
+        flex-direction: column;
     }
 }
