@@ -25,6 +25,11 @@ body {
 h1, h2 {
     margin-bottom: 40px;
 }
+
+.cart-name>h1 {
+    margin-bottom: 3px;
+}
+
 .logo {
     font-size: 40px;
     font-weight: 900;

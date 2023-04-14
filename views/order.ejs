@@ -1,14 +1,94 @@
 <%- include('partials/header', {user: user}); %>
-    <div class="content">
+    <style>
+        table {
+            border-collapse:separate;
+            border:solid black 2px;
+            border-radius:6px;
+            -moz-border-radius:6px;
+        }
 
+        td, th {
+            border-left:none;
+            border-top:none;
+        }
+
+        th {
+            background-color: blue;
+            border-top: none;
+        }
+
+        td:first-child, th:first-child {
+            border-left: none;
+        }
+
+    </style>
+    <div class="content">
         <div class="tab row">
-            <h1>Objednávka</h1>
+            <h1><i class="fa-solid fa-circle-info"></i> Informácie o objednávke</h1>
+            <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Meno</th>
+                      <td><%=order.firstName%></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Priezvisko</th>
+                      <td><%=order.lastName%></td>
+
+                    </tr>
+                    <tr>
+                      <th scope="row">e-mail</th>
+                      <td><%=order.email%></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Mesto</th>
+                        <td><%=order.city%></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Ulica</th>
+                        <td><%=order.street%></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Status</th>
+                        
+                        <% if(typeof user !== 'undefined') { %>
+                            <% if(user.isAdmin) { %>
+                                <td>
+                                    <form action="/updateOrder/<%=order._id%>" method="post" style="display: inline-block">
+
+                                        <div class="input-group mb-3">
+                                            <select class="form-control" name="newStatus" required>
+                                                <option value="Objednávka odoslaná" <% if(order.status == "Objednávka odoslaná") { %> selected <% } %> >Objednávka odoslaná</option>
+                                                <option value="Objednávka doručená" <% if(order.status == "Objednávka doručená") { %> selected <% } %>>Objednávka doručená</option>
+                                                <option value="Čaká na vyzdvihnutie" <% if(order.status == "Čaká na vyzdvihnutie") { %> selected <% } %>>Čaká na vyzdvihnutie</option>
+                                                <option value="Objednávka vyzdvihnutá" <% if(order.status == "Objednávka vyzdvihnutá") { %> selected <% } %>>Objednávka vyzdvihnutá</option>
+                                            </select>
+                                            <button class="btn btn-warning" type="submit" id="button-addon2">Aktualizovať</button>
+                                        </div>
+                                        
+                                        
+                                    </form>
+                                </td>
+                            <% } else { %>
+                                <td><%=order.status%></td> 
+                                <% } %>
+                        <% } else { %>
+                                <td><%=order.status%></td> 
+                                <% } %>
+                    </tr>
+                  </tbody>
+            </table>
+        </div>
+        <div class="tab row">
+            <h1><i class="fa-solid fa-rectangle-list"></i> Zoznam produktov</h1>
+            <% let total = 0 %>
             <% for(let index=0; index < products.length; index++){ %>
+                <% total += products[index].price; %>
                 <div class="row cart-item">
-                    <div class="col-2 cart-image">
+                    <div class="col-1 cart-image">
                         <img class="product-image" src="<%=products[index].img%>" alt="product-image">
                     </div>
-                    <div class="col-8 cart-name">
+                    <div class="col-9 cart-name">
                         <h1>
                             <%=products[index].name%>
                         </h1>
@@ -18,6 +98,20 @@
                     </div>
                 </div>
             <% } %>
+            
+            <div class="row cart-item" style="border-top: 1px solid;">
+                <div class="col-1 cart-image">
+                    <img class="product-image" src="https://cdn3.iconfinder.com/data/icons/editor-11/24/275_-_Editor_function_math_mathematical_summ_total_icon-512.png" style="border: none;">
+                </div>
+                <div class="col-9 cart-name">
+                    <h1>
+                        Dokopy
+                    </h1>
+                </div>
+                <div class="col-2">
+                    <span class="price"><%=total.toFixed(2)%> €</span>
+                </div>
+            </div>
         </div>
             
     </div>

@@ -117,7 +117,7 @@ app.get("/cookies", (req, res) => {
 })
 //temp
 app.get("/clearcookies", (req, res) => {
-    //res.clearCookie('cookiePreference');
+    res.clearCookie('cookiePreference');
     //res.clearCookie('cart');
     res.clearCookie('coupon')
     res.redirect("/cookies")
@@ -400,7 +400,7 @@ app.get("/order/:id", (req, res) => {
             Product.find().where('_id').in(itemIDs).exec((err, foundItems) => {
                 if (!err) {
                     // console.log(foundItems);
-                    res.render("order", {user: req.user, products: foundItems})
+                    res.render("order", {user: req.user, products: foundItems, order: foundOrder})
                 } else {
                     console.log(err);
                 }
@@ -498,6 +498,20 @@ app.post("/order", (req, res) => {
     
     
 
+})
+
+app.post("/updateOrder/:id", (req, res) => {
+    let id = req.params.id;
+    let newStatus = req.body.newStatus;
+    
+
+    Order.updateOne({_id: id}, {$set: {status: newStatus}}, (err, updatedOrder) => {
+        if(!err) {
+            res.redirect("/order/" + id);
+        } else {
+            console.log(err);
+        }
+    })
 })
 
 
